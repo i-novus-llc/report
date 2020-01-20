@@ -1,0 +1,8 @@
+version: "3.6"
+
+services:
+  report-service:
+    deploy:
+      placement:
+        constraints:
+        - node.labels.dc == hetzner

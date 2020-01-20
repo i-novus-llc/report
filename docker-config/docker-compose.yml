@@ -1,0 +1,17 @@
+version: "3.6"
+
+services:
+  report-service:
+    labels:
+      filebeat: "springboot"
+    environment:
+      SPRING_APPLICATION_NAME: "report-service"
+      JAVA_OPTS: -Xmx400m
+    ports:
+    - "8080"
+    deploy:
+      resources:
+        limits:
+          memory: 800M
+      restart_policy:
+        max_attempts: 3

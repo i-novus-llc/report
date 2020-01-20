@@ -1,0 +1,5 @@
+version: "3.6"
+
+services:
+  report-service:
+    image: "${DOCKER_REGISTRY}/n2o-cloud-demo/report-service:${TAG}"

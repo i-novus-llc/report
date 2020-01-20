@@ -1,0 +1,12 @@
+version: "3.6"
+services:
+  db:
+    build:
+      context: domrf-db
+
+  report-service:
+    build:
+      context: report-service/
+      args:
+        JAR_FILE: target/report-service.jar
+

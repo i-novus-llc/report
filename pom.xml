@@ -25,10 +25,17 @@
         <jasperreports.version>6.11.0</jasperreports.version>
         <lowagie.version>2.1.7</lowagie.version>
         <filestorage.version>2.2</filestorage.version>
+        <poi.version>4.1.1</poi.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>ru.i-novus.common</groupId>
+                <artifactId>fs-file-storage</artifactId>
+                <version>${filestorage.version}</version>
+            </dependency>
+            
             <dependency>
                 <groupId>net.sf.jasperreports</groupId>
                 <artifactId>jasperreports</artifactId>
@@ -36,15 +43,21 @@
             </dependency>
 
             <dependency>
+                <groupId>net.sf.jasperreports</groupId>
+                <artifactId>jasperreports-fonts</artifactId>
+                <version>${jasperreports.version}</version>
+            </dependency>
+            
+            <dependency>
                 <groupId>com.lowagie</groupId>
                 <artifactId>itext</artifactId>
                 <version>${lowagie.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>ru.i-novus.common</groupId>
-                <artifactId>fs-file-storage</artifactId>
-                <version>${filestorage.version}</version>
+                <groupId>org.apache.poi</groupId>
+                <artifactId>poi</artifactId>
+                <version>${poi.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

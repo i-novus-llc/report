@@ -33,6 +33,11 @@
             <artifactId>fs-file-storage</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+        </dependency>
+
         <!--JASPER REPORTS-->
         <dependency>
             <groupId>net.sf.jasperreports</groupId>
@@ -40,8 +45,18 @@
         </dependency>
 
         <dependency>
+            <groupId>net.sf.jasperreports</groupId>
+            <artifactId>jasperreports-fonts</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>com.lowagie</groupId>
             <artifactId>itext</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
         </dependency>
 
         <!--TEST-->

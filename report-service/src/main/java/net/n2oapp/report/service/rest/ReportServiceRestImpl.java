@@ -3,13 +3,21 @@ package net.n2oapp.report.service.rest;
 import net.n2oapp.report.api.ReportService;
 import net.n2oapp.report.exception.ReportException;
 import net.n2oapp.report.service.filestorage.FileStorage;
-import net.sf.jasperreports.engine.*;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.export.JRCsvExporter;
+import net.sf.jasperreports.engine.export.JRPdfExporter;
 import net.sf.jasperreports.engine.export.JRXlsExporter;
+import net.sf.jasperreports.engine.export.JRXmlExporter;
+import net.sf.jasperreports.engine.export.ooxml.JRDocxExporter;
 import net.sf.jasperreports.engine.export.ooxml.JRXlsxExporter;
-import net.sf.jasperreports.export.*;
+import net.sf.jasperreports.export.SimpleExporterInput;
+import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
+import net.sf.jasperreports.export.SimpleWriterExporterOutput;
+import net.sf.jasperreports.export.SimpleXmlExporterOutput;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,12 +30,14 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
 import static java.util.Objects.isNull;
 import static javax.ws.rs.core.HttpHeaders.CONTENT_DISPOSITION;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 @Controller
 public class ReportServiceRestImpl implements ReportService {
@@ -43,30 +53,35 @@ public class ReportServiceRestImpl implements ReportService {
     @Override
     public Response generateReport(String template, String format, UriInfo ui) {
         Map<String, Object> parameters = prepareParameters(ui.getQueryParameters());
-        InputStream reportInputStream = generate(template, format, parameters);
+        try (InputStream is = generate(template, format, parameters)) {
 
-        return Response
-                .ok(reportInputStream, MediaType.APPLICATION_OCTET_STREAM_TYPE)
-                .header(CONTENT_DISPOSITION, buildContentDisposition(template, format))
-                .build();
+            return Response
+                    .ok(is, MediaType.APPLICATION_OCTET_STREAM_TYPE)
+                    .header(CONTENT_DISPOSITION, buildContentDisposition(template, format))
+                    .build();
+        } catch (JRException|IOException e) {
+            throw new ReportException("Failed to generate report", e);
+        }
     }
 
     @Override
     public Response compileReportTemplate(Attachment attachment) {
-        try {
-            InputStream is = attachment.getDataHandler().getInputStream();
+        if (isNull(attachment.getContentDisposition()) || isBlank(attachment.getContentDisposition().getFilename()))
+            throw new ReportException("Invalid file name");
 
-            if (isNull(attachment.getContentDisposition()) || StringUtils.isBlank(attachment.getContentDisposition().getFilename())) {
-                throw new ReportException("Invalid file name");
-            }
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            JasperCompileManager.compileReportToStream(is, outputStream);
+        try (InputStream is = attachment.getDataHandler().getInputStream();
+             ByteArrayOutputStream os = new ByteArrayOutputStream()) {
 
+            JasperCompileManager.compileReportToStream(is, os);
             String fileName = getFileNameWithoutExtension(attachment.getContentDisposition().getFilename());
-            fileStorage.saveContentWithFullPath(new ByteArrayInputStream(outputStream.toByteArray()), fileName + withLeadingDot(JASPER_EXTENSION));
-        } catch (Exception e) {
-            logger.error("File compile failed", e);
-            throw new ReportException("File compile failed");
+
+            try (InputStream iss = new ByteArrayInputStream(os.toByteArray())) {
+                fileStorage.saveContentWithFullPath(iss, fileName + withLeadingDot(JASPER_EXTENSION));
+            }
+        } catch (JRException e) {
+            throw new ReportException("Failed to compile report template");
+        } catch (IOException e) {
+            throw new ReportException("Failed to save compiled report template (.jasper)");
         }
         return Response.ok().build();
     }
@@ -95,60 +110,59 @@ public class ReportServiceRestImpl implements ReportService {
         return str.charAt(0) != '.' ? "." + str : str;
     }
 
-    private InputStream generate(String template, String format, Map<String, Object> params) {
+    private InputStream generate(String template, String format, Map<String, Object> params) throws JRException, IOException {
         InputStream templateFileIO = fileStorage.getContent(template + withLeadingDot(JASPER_EXTENSION));
-        try {
+
+        try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
             JasperPrint jasperPrint = JasperFillManager.fillReport(templateFileIO, params);
 
-            // todo use config files
             switch (format.toLowerCase()) {
-                case "pdf":
-                    return new ByteArrayInputStream(JasperExportManager.exportReportToPdf(jasperPrint));
-                case "xml":
-                    return new ByteArrayInputStream(JasperExportManager.exportReportToXml(jasperPrint).getBytes());
-                case "csv" : {
-                    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                case "pdf": {
+                    JRPdfExporter exporter = new JRPdfExporter();
+                    exporter.setExporterInput(new SimpleExporterInput(jasperPrint));
+                    exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(os));
+                    exporter.exportReport();
+                    break;
+                }
+                case "xml": {
+                    JRXmlExporter exporter = new JRXmlExporter();
+                    exporter.setExporterInput(new SimpleExporterInput(jasperPrint));
+                    exporter.setExporterOutput(new SimpleXmlExporterOutput(os));
+                    exporter.exportReport();
+                    break;
+                }
+                case "csv": {
                     JRCsvExporter exporter = new JRCsvExporter();
                     exporter.setExporterInput(new SimpleExporterInput(jasperPrint));
-                    exporter.setExporterOutput(new SimpleWriterExporterOutput(outputStream));
-                    SimpleCsvExporterConfiguration configuration = new SimpleCsvExporterConfiguration();
-                    configuration.setWriteBOM(Boolean.TRUE);
-                    configuration.setRecordDelimiter("\r\n");
-                    exporter.setConfiguration(configuration);
+                    exporter.setExporterOutput(new SimpleWriterExporterOutput(os));
                     exporter.exportReport();
-                    return new ByteArrayInputStream(outputStream.toByteArray());
+                    break;
                 }
-                case "xlsx" : {
-                    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-                    SimpleXlsxReportConfiguration configuration = new SimpleXlsxReportConfiguration();
-                    configuration.setOnePagePerSheet(true);
-                    configuration.setIgnoreGraphics(false);
+                case "xlsx": {
                     JRXlsxExporter exporter = new JRXlsxExporter();
                     exporter.setExporterInput(new SimpleExporterInput(jasperPrint));
-                    exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(outputStream));
-                    exporter.setConfiguration(configuration);
+                    exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(os));
                     exporter.exportReport();
-                    return new ByteArrayInputStream(outputStream.toByteArray());
+                    break;
                 }
-                case "xls" : {
-                    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-                    SimpleXlsReportConfiguration configuration = new SimpleXlsReportConfiguration();
-                    configuration.setOnePagePerSheet(true);
-                    configuration.setIgnoreGraphics(false);
+                case "xls": {
                     JRXlsExporter exporter = new JRXlsExporter();
                     exporter.setExporterInput(new SimpleExporterInput(jasperPrint));
-                    exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(outputStream));
-                    exporter.setConfiguration(configuration);
+                    exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(os));
                     exporter.exportReport();
-                    return new ByteArrayInputStream(outputStream.toByteArray());
+                    break;
                 }
-                default: throw new ReportException("Invalid format");
+                case "docx": {
+                    JRDocxExporter exporter = new JRDocxExporter();
+                    exporter.setExporterInput(new SimpleExporterInput(jasperPrint));
+                    exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(os));
+                    exporter.exportReport();
+                    break;
+                }
+                default:
+                    throw new ReportException("Invalid report format");
             }
-
-        } catch (JRException e) {
-            // todo
-            logger.error("failed");
-            throw new ReportException("", e);
+            return new ByteArrayInputStream(os.toByteArray());
         }
     }
 }

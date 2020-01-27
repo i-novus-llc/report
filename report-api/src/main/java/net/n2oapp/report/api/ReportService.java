@@ -18,18 +18,16 @@ import javax.ws.rs.core.UriInfo;
 public interface ReportService {
 
     @GET
-    @ApiOperation("Сформировать отчет")
-    @Path("/{template}/{format}")
+    @ApiOperation(value = "Сформировать отчет", notes = "Пример: /report/form345.pdf?param1=p1?param2=p2")
+    @Path("/{template}.{format}")
     Response generateReport(
             @ApiParam("Наименование шаблона отчета (без расширения)") @PathParam("template") String template,
-            @ApiParam("Формат отчета") @PathParam("format") String format,
-            @ApiParam("Параметры отчета") @Context UriInfo uriInfo);     // todo
-
+            @ApiParam("Формат отчета (pdf, xml, csv, xls, xlsx, docx, odt, ods)") @PathParam("format") String format,
+            @ApiParam("Параметры отчета") @Context UriInfo uriInfo);
 
     @POST
-    @Path("/compile")
-    @ApiOperation("Скомпилировать и сохранить шаблон отчета в файловое хранилище")
-    @ApiImplicitParams(@ApiImplicitParam(name = "file", value = "Файл", required = true, dataType = "java.io.File", paramType = "form"))
+    @ApiOperation("Скомпилировать и сохранить шаблон отчета в файловое хранилище (существующий затирается)")
+    @ApiImplicitParams(@ApiImplicitParam(name = "file", value = "XML-шаблон отчета", required = true, dataType = "java.io.File", paramType = "form"))
     Response compileReportTemplate(
             @ApiParam(hidden = true, value = "Файл", required = true) @NotNull @Multipart(value = "file") Attachment attachment);
 }

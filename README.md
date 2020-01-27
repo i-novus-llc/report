@@ -11,7 +11,6 @@
 
 1. **Настройка библиотеки JasperReports.**<br/>
     http://jasperreports.sourceforge.net/config.reference.html
-    http://jasperreports.sourceforge.net/api/index.html
     
     Свойства конфигурации могут быть прописаны как в **jasperreports.properties**,<br/> так и указаны в конкретном шаблоне: 
 

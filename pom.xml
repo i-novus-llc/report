@@ -26,6 +26,7 @@
         <lowagie.version>2.1.7</lowagie.version>
         <filestorage.version>2.2</filestorage.version>
         <poi.version>4.1.1</poi.version>
+        <antlr.version>2.7.7</antlr.version>
     </properties>
 
     <dependencyManagement>
@@ -58,6 +59,12 @@
                 <groupId>org.apache.poi</groupId>
                 <artifactId>poi</artifactId>
                 <version>${poi.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>antlr</groupId>
+                <artifactId>antlr</artifactId>
+                <version>${antlr.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

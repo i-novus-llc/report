@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.11.0.final using JasperReports Library version 6.11.0-0c4056ccaa4d25a5a8c45672d2f764ea3498bebb  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Blank_A4_4" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="30" bottomMargin="30" uuid="35ac0263-58e6-4be5-b9b4-ad2dad01c12e">
+	<queryString language="jsonql">
+		<![CDATA[]]>
+	</queryString>
+	<field name="employeeDomrfKP.name" class="java.lang.String">
+		<property name="net.sf.jasperreports.json.field.expression" value="employeeDomrfKP.name"/>
+	</field>
+	<field name="employeeDomrfPKP.name" class="java.lang.String">
+		<property name="net.sf.jasperreports.json.field.expression" value="employeeDomrfPKP.name"/>
+	</field>
+	<field name="employeeDomrfYUP.name" class="java.lang.String">
+		<property name="net.sf.jasperreports.json.field.expression" value="employeeDomrfYUP.name"/>
+	</field>
+	<field name="employeeDomrfZS.name" class="java.lang.String">
+		<property name="net.sf.jasperreports.json.field.expression" value="employeeDomrfZS.name"/>
+	</field>
+	<field name="employeeDomrfSB.name" class="java.lang.String">
+		<property name="net.sf.jasperreports.json.field.expression" value="employeeDomrfSB.name"/>
+	</field>
+	<field name="employeeDomrfSE.name" class="java.lang.String">
+		<property name="net.sf.jasperreports.json.field.expression" value="employeeDomrfSE.name"/>
+	</field>
+	<field name="employeeDomrfPRPA.name" class="java.lang.String">
+		<property name="net.sf.jasperreports.json.field.expression" value="employeeDomrfPRPA.name"/>
+	</field>
+	<detail>
+		<band height="211" splitType="Stretch">
+			<textField>
+				<reportElement x="180" y="1" width="374" height="30" uuid="8cb502e8-181a-4419-8345-cbfe0abcd9da">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="201941b2-2fa1-4769-a3f2-ca884fccd560"/>
+					<property name="com.jaspersoft.studio.unit.firstLineIndent" value="px"/>
+					<property name="com.jaspersoft.studio.unit.spacingBefore" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineColor="#D6D6D6"/>
+				</box>
+				<textElement textAlignment="Left">
+					<paragraph firstLineIndent="5" spacingBefore="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{employeeDomrfKP.name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="180" y="31" width="374" height="30" uuid="8af628fe-6bed-4794-83e0-f28d49f87692">
+					<property name="com.jaspersoft.studio.unit.firstLineIndent" value="px"/>
+					<property name="com.jaspersoft.studio.unit.spacingBefore" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineColor="#D6D6D6"/>
+				</box>
+				<textElement>
+					<paragraph firstLineIndent="5" spacingBefore="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{employeeDomrfPKP.name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="180" y="61" width="374" height="30" uuid="e822c6f6-cb6a-43cd-8faa-3d7400c04d87">
+					<property name="com.jaspersoft.studio.unit.firstLineIndent" value="px"/>
+					<property name="com.jaspersoft.studio.unit.spacingBefore" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineColor="#D6D6D6"/>
+				</box>
+				<textElement>
+					<paragraph firstLineIndent="5" spacingBefore="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{employeeDomrfYUP.name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="180" y="91" width="374" height="30" uuid="58ac2bb3-4d1b-4bc4-96e3-c0fd67f0066f">
+					<property name="com.jaspersoft.studio.unit.firstLineIndent" value="px"/>
+					<property name="com.jaspersoft.studio.unit.spacingBefore" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineColor="#D6D6D6"/>
+				</box>
+				<textElement>
+					<paragraph firstLineIndent="5" spacingBefore="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{employeeDomrfZS.name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="180" y="121" width="374" height="30" uuid="8c123218-82c3-4a62-ae6a-42c1781c0225">
+					<property name="com.jaspersoft.studio.unit.firstLineIndent" value="px"/>
+					<property name="com.jaspersoft.studio.unit.spacingBefore" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineColor="#D6D6D6"/>
+				</box>
+				<textElement>
+					<paragraph firstLineIndent="5" spacingBefore="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{employeeDomrfSB.name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="180" y="151" width="374" height="30" uuid="e804d290-fec1-43f9-835c-6a1f313885bf">
+					<property name="com.jaspersoft.studio.unit.firstLineIndent" value="px"/>
+					<property name="com.jaspersoft.studio.unit.spacingBefore" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineColor="#D6D6D6"/>
+				</box>
+				<textElement>
+					<paragraph firstLineIndent="5" spacingBefore="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{employeeDomrfSE.name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="180" y="181" width="374" height="30" uuid="c042efaf-8321-4aa6-97ff-9f54d4433c7e">
+					<property name="com.jaspersoft.studio.unit.firstLineIndent" value="px"/>
+					<property name="com.jaspersoft.studio.unit.spacingBefore" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineColor="#D6D6D6"/>
+				</box>
+				<textElement>
+					<paragraph firstLineIndent="5" spacingBefore="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{employeeDomrfPRPA.name}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="1" width="179" height="30" uuid="e5076cd1-904e-4361-ab1e-3c5d7653a516">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.firstLineIndent" value="px"/>
+					<property name="com.jaspersoft.studio.unit.spacingBefore" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineColor="#D6D6D6"/>
+				</box>
+				<textElement textAlignment="Left">
+					<font size="10"/>
+					<paragraph lineSpacing="Single" lineSpacingSize="2.0" firstLineIndent="5" spacingBefore="5"/>
+				</textElement>
+				<text><![CDATA[Кредичное подразделениe]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="31" width="179" height="29" uuid="715727c8-6acc-4cfb-a19c-4456b1e0c45e">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.firstLineIndent" value="px"/>
+					<property name="com.jaspersoft.studio.unit.spacingBefore" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineColor="#D6D6D6"/>
+				</box>
+				<textElement textAlignment="Left">
+					<font size="10"/>
+					<paragraph lineSpacing="Single" lineSpacingSize="2.0" firstLineIndent="5" spacingBefore="5"/>
+				</textElement>
+				<text><![CDATA[Поддерживающее кредитное подразделение]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="61" width="179" height="30" uuid="ac3d9b74-a99d-47a9-b7d7-658619a64237">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.firstLineIndent" value="px"/>
+					<property name="com.jaspersoft.studio.unit.spacingBefore" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineColor="#D6D6D6"/>
+				</box>
+				<textElement textAlignment="Left">
+					<font size="10"/>
+					<paragraph lineSpacing="Single" lineSpacingSize="2.0" firstLineIndent="5" spacingBefore="5"/>
+				</textElement>
+				<text><![CDATA[Юридическое подразделение]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="91" width="179" height="30" uuid="243a5777-bb33-4f6f-b5d6-ce5623171633">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.firstLineIndent" value="px"/>
+					<property name="com.jaspersoft.studio.unit.spacingBefore" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineColor="#D6D6D6"/>
+				</box>
+				<textElement textAlignment="Left">
+					<font size="10"/>
+					<paragraph lineSpacing="Single" lineSpacingSize="2.0" firstLineIndent="5" spacingBefore="5"/>
+				</textElement>
+				<text><![CDATA[Залоговая служба]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="121" width="179" height="30" uuid="805e2579-c5ba-4a24-b6aa-3d6d2ed17524">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.firstLineIndent" value="px"/>
+					<property name="com.jaspersoft.studio.unit.spacingBefore" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineColor="#D6D6D6"/>
+				</box>
+				<textElement textAlignment="Left">
+					<font size="10"/>
+					<paragraph lineSpacing="Single" lineSpacingSize="2.0" firstLineIndent="5" spacingBefore="5"/>
+				</textElement>
+				<text><![CDATA[Служба безопасности]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="151" width="179" height="30" uuid="c9f97a68-0030-444d-8017-e1d65eda7d5c">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.firstLineIndent" value="px"/>
+					<property name="com.jaspersoft.studio.unit.spacingBefore" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineColor="#D6D6D6"/>
+				</box>
+				<textElement textAlignment="Left">
+					<font size="10"/>
+					<paragraph lineSpacing="Single" lineSpacingSize="2.0" firstLineIndent="5" spacingBefore="5"/>
+				</textElement>
+				<text><![CDATA[Подразделение по строительной экспертизе]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="181" width="179" height="30" uuid="84bfb819-a0b5-49ce-a409-275476dfcb12">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.firstLineIndent" value="px"/>
+					<property name="com.jaspersoft.studio.unit.spacingBefore" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineColor="#D6D6D6"/>
+				</box>
+				<textElement textAlignment="Left">
+					<font size="10"/>
+					<paragraph lineSpacing="Single" lineSpacingSize="2.0" firstLineIndent="5" spacingBefore="5"/>
+				</textElement>
+				<text><![CDATA[Подразделение по работе с проблемными активами]]></text>
+			</staticText>
+		</band>
+	</detail>
+</jasperReport>

@@ -3,7 +3,10 @@ package net.n2oapp.report.service.rest;
 import net.n2oapp.report.api.ReportService;
 import net.n2oapp.report.exception.ReportException;
 import net.n2oapp.report.service.filestorage.FileStorage;
-import net.sf.jasperreports.engine.*;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.export.JRCsvExporter;
 import net.sf.jasperreports.engine.export.JRPdfExporter;
 import net.sf.jasperreports.engine.export.JRXlsExporter;
@@ -15,8 +18,6 @@ import net.sf.jasperreports.engine.export.ooxml.JRXlsxExporter;
 import net.sf.jasperreports.export.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -31,19 +32,20 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 import static javax.ws.rs.core.HttpHeaders.CONTENT_DISPOSITION;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 @Controller
 public class ReportServiceRestImpl implements ReportService {
 
-    private static final Logger logger = LoggerFactory.getLogger(ReportServiceRestImpl.class);
-
     private static final String CONTENT_DISP_WITHOUT_FILENAME = "attachment; filename=";
     private static final String JASPER_EXTENSION = "jasper";
     private static final String FILE_STORAGE_ROOT_PROPERTY_NAME = "fsRoot";
+    private static final String PARAMETERS_PROPERTIES = "parameters.properties";
 
     @Value("${fileStorage.root}")
     private String fileStorageRoot;
@@ -88,13 +90,35 @@ public class ReportServiceRestImpl implements ReportService {
     }
 
     private Map<String, Object> prepareParameters(MultivaluedMap<String, String> multivaluedMap) {
-        Map<String, Object> result = new HashMap<>();
+        Map<String, Object> resultMap = new HashMap<>();
+        // parameters from .properties file
+        addParametersFromProperties(resultMap);
+        // query parameters
+        addQueryParameters(resultMap, multivaluedMap);
+        // file storage root parameter
+        resultMap.put(FILE_STORAGE_ROOT_PROPERTY_NAME, fileStorageRoot);
+
+        return resultMap;
+    }
+
+    private void addParametersFromProperties(Map<String, Object> resultMap) {
+        Properties properties = new Properties();
+        try (InputStream is = getClass().getClassLoader().getResourceAsStream(PARAMETERS_PROPERTIES)) {
+            if (nonNull(is)) {
+                properties.load(is);
+                properties.stringPropertyNames().forEach(propName -> resultMap.put(propName, properties.getProperty(propName)));
+            }
+        } catch (IOException e) {
+            throw new ReportException("Failed to get properties from parameters.properties", e);
+        }
+    }
+
+    private void addQueryParameters(Map<String, Object> resultMap, MultivaluedMap<String, String> multivaluedMap) {
         multivaluedMap.forEach((name, values) -> {
             if (!CollectionUtils.isEmpty(values))
-                result.put(name, (values.size() != 1) ? values : values.get(0));
+                resultMap.put(name, (values.size() != 1) ? values : values.get(0));
         });
-        result.put(FILE_STORAGE_ROOT_PROPERTY_NAME, fileStorageRoot);
-        return result;
+
     }
 
     private String getFileNameWithoutExtension(String fileName) {

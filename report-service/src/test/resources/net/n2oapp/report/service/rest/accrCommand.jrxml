@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.11.0.final using JasperReports Library version 6.11.0-0c4056ccaa4d25a5a8c45672d2f764ea3498bebb  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Simple_Blue_1" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isIgnorePagination="true" uuid="de9ab431-8115-426d-bc85-45c455c67a72">
+	<property name="net.sf.jasperreports.print.create.bookmarks" value="false"/>
+	<parameter name="status" class="java.lang.String"/>
+	<parameter name="net.sf.jasperreports.json.source" class="java.lang.String">
+		<defaultValueExpression><![CDATA["http://docker.one:8812/api/accreditation/domrf/requests?page=0&size=1000" + ($P{status} == null ? "" : "&status=" + $P{status})]]></defaultValueExpression>
+	</parameter>
+	<parameter name="fsRoot" class="java.lang.String" evaluationTime="Early"/>
+	<queryString language="jsonql">
+		<![CDATA[content]]>
+	</queryString>
+	<field name="id" class="java.lang.String">
+		<property name="net.sf.jasperreports.json.field.expression" value="id"/>
+	</field>
+	<field name="numberDomrf" class="java.lang.String">
+		<property name="net.sf.jasperreports.json.field.expression" value="numberDomrf"/>
+	</field>
+	<field name="bankShortName" class="java.lang.String">
+		<property name="net.sf.jasperreports.json.field.expression" value="bankShortName"/>
+	</field>
+	<field name="employeeBankShortName" class="java.lang.String">
+		<property name="net.sf.jasperreports.json.field.expression" value="size"/>
+		<fieldDescription><![CDATA[employeeBankShortName]]></fieldDescription>
+	</field>
+	<background>
+		<band/>
+	</background>
+	<title>
+		<band height="100">
+			<frame>
+				<reportElement mode="Opaque" x="-20" y="-20" width="595" height="120" backcolor="#006699" uuid="f92848b2-0e44-4a21-bc9f-19705818b265"/>
+				<staticText>
+					<reportElement x="20" y="20" width="310" height="43" forecolor="#FFFFFF" uuid="1eeff7f1-7bd4-4161-be89-b628173c339a"/>
+					<textElement>
+						<font size="34" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Команды ДОМ РФ]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="20" y="80" width="555" height="35" forecolor="#FFFFFF" uuid="eb7d8942-7fcf-463e-b04c-0f978e54d5b0"/>
+					<textElement textAlignment="Right">
+						<font size="14" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Команды ДОМ.РФ, назначенные на обратобку заявок на аккредитацию]]></text>
+				</staticText>
+			</frame>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="13"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="40">
+			<line>
+				<reportElement x="-20" y="20" width="595" height="1" forecolor="#666666" uuid="61d0eefc-bcd6-4390-ae52-9f9b1cbfd669"/>
+			</line>
+			<staticText>
+				<reportElement x="2" y="0" width="188" height="20" forecolor="#006699" uuid="9202f07a-a82c-446a-91df-b047b171bc81">
+					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+					<property name="com.jaspersoft.studio.unit.spacingBefore" value="px"/>
+				</reportElement>
+				<textElement>
+					<font size="12" isBold="true"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<text><![CDATA[Наименование Банка]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="190" y="0" width="119" height="20" forecolor="#006699" uuid="8b623505-b672-40cd-8579-c5bf45cfd1b6">
+					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+					<property name="com.jaspersoft.studio.unit.spacingBefore" value="px"/>
+				</reportElement>
+				<textElement>
+					<font size="12" isBold="true"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<text><![CDATA[Номер заявки]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="310" y="0" width="243" height="20" forecolor="#006699" uuid="e82d3b7c-b06a-4dab-9ba9-0a615f8258b1">
+					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+					<property name="com.jaspersoft.studio.unit.spacingBefore" value="px"/>
+				</reportElement>
+				<textElement>
+					<font size="12" isBold="true"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<text><![CDATA[Ответственный сотрудник Банка]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="119">
+			<property name="com.jaspersoft.studio.layout"/>
+			<textField>
+				<reportElement isPrintRepeatedValues="false" x="0" y="0" width="190" height="21" uuid="3114fdb6-35ba-48c2-bd93-ba3d87b3de2a">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="7c7b085d-ebb0-4ae3-8cec-2a650f4ed02a"/>
+					<property name="com.jaspersoft.studio.unit.firstLineIndent" value="px"/>
+					<property name="com.jaspersoft.studio.unit.spacingBefore" value="px"/>
+					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+				</reportElement>
+				<textElement markup="none">
+					<font isBold="true"/>
+					<paragraph leftIndent="5" spacingBefore="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{bankShortName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement isPrintRepeatedValues="false" x="190" y="1" width="119" height="20" uuid="6aba5677-f734-4246-817d-7927d80da620">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="5a79afeb-6e88-4ddb-af4d-d4d63fe54001"/>
+					<property name="com.jaspersoft.studio.unit.spacingBefore" value="px"/>
+					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+				</reportElement>
+				<textElement>
+					<font isBold="true"/>
+					<paragraph leftIndent="5" spacingBefore="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{numberDomrf}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement isPrintRepeatedValues="false" x="310" y="0" width="244" height="20" uuid="12a29a71-73c6-40d1-a43d-decfcee3a8f5">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="fff5d3cf-1307-42b9-8750-d93f61ec7b6a"/>
+					<property name="com.jaspersoft.studio.unit.spacingBefore" value="px"/>
+					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+				</reportElement>
+				<textElement>
+					<font isBold="true"/>
+					<paragraph leftIndent="5" spacingBefore="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{employeeBankShortName}]]></textFieldExpression>
+			</textField>
+			<subreport overflowType="Stretch">
+				<reportElement x="-20" y="21" width="595" height="89" forecolor="#006699" uuid="3415dfd5-f572-4f22-8164-9d643b8a5ae7"/>
+				<subreportParameter name="id">
+					<subreportParameterExpression><![CDATA[$F{id}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="net.sf.jasperreports.json.source">
+					<subreportParameterExpression><![CDATA["http://docker.one:8812/api/accreditation/domrf/requests/" + $F{id} + "/command"]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportExpression><![CDATA[$P{fsRoot}+"/command.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="22" splitType="Stretch">
+			<textField>
+				<reportElement x="395" y="1" width="115" height="20" uuid="11a7bef6-001d-4524-aa35-008b69edf074"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["Page " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="510" y="1" width="45" height="20" uuid="eef872ab-b418-4708-9cc7-7f5c63b2652a"/>
+				<textElement textAlignment="Left"/>
+				<textFieldExpression><![CDATA[" of " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

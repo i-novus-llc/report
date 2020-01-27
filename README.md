@@ -14,7 +14,7 @@
     
     Свойства конфигурации могут быть прописаны как в *jasperreports.properties*,<br/> так и указаны в конкретном шаблоне: 
 
-    ```xml
+    ```
     <property name="net.sf.jasperreports.export.pdf.encrypted" value="true"/>
     ```
  

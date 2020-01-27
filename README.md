@@ -27,12 +27,15 @@
 
        
 ## Использование
-**Пример запроса**:<br/>
-http://localhost:8080/api/report/form345.pdf?param1=p1?param2=p2
-
-**Примеры шаблонов**:<br/>
+1. Создать шаблон отчета (.jrxml) с помощью Jaspersoft Studio или других средств.
+2. Результат скомпилировать и сохранить в файловое хранилище , выполнив POST запрос (на вход .jrxml)
+Примеры шаблонов:<br/>
 [accrCommand.jrxml](accrCommand.jrxml) <br/>
-[command.jrxml](command.jrxml) - сабрепорт, используемый в accrCommand.jrxml
+[command.jrxml](command.jrxml) - сабрепорт, используемый в accrCommand.jrxml<br/>
+3. Сгенерировать отчет, выполнив GET запрос<br/> 
+Пример запроса:<br/>
+http://localhost:8080/api/report/accrCommand.pdf?status=ACCREDITED
+
 
 [JIRA]: https://jira.i-novus.ru/projects/REPENG
 [CI]: https://ci.i-novus.ru/view/n2o-components/job/report

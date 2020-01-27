@@ -9,7 +9,7 @@
 
 ## Настройка
 
-1. **Настройка библиотеки JasperReports.**
+1. **Настройка библиотеки JasperReports.**<br/>
     http://jasperreports.sourceforge.net/config.reference.html
     http://jasperreports.sourceforge.net/api/index.html
     

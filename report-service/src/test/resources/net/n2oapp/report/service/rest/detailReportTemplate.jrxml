@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.11.0.final using JasperReports Library version 6.11.0-0c4056ccaa4d25a5a8c45672d2f764ea3498bebb  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Blank_A4_4" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="35ac0263-58e6-4be5-b9b4-ad2dad01c12e">
+	<parameter name="pageid" class="java.lang.String"/>
+	<queryString language="json">
+		<![CDATA[query.pages.$P{pageid}]]>
+	</queryString>
+	<field name="touched" class="java.lang.String">
+		<property name="net.sf.jasperreports.json.field.expression" value="touched"/>
+		<fieldDescription><![CDATA[touched]]></fieldDescription>
+	</field>
+	<field name="fullurl" class="java.lang.String">
+		<property name="net.sf.jasperreports.json.field.expression" value="fullurl"/>
+		<fieldDescription><![CDATA[fullurl]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="42" splitType="Stretch">
+			<textField>
+				<reportElement x="4" y="8" width="146" height="30" uuid="8cb502e8-181a-4419-8345-cbfe0abcd9da">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="201941b2-2fa1-4769-a3f2-ca884fccd560"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{touched}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="164" y="7" width="216" height="30" uuid="f075bad9-9008-4d8d-b2fc-e4416496ca9e">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="397b306c-52c9-4d32-8e13-6b5e73755904"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{fullurl}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

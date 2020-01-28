@@ -59,12 +59,17 @@
             <artifactId>poi</artifactId>
         </dependency>
 
-        <!--TEST-->
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
+            <groupId>antlr</groupId>
+            <artifactId>antlr</artifactId>
         </dependency>
 
+        <!--TEST-->
+        <dependency>
+            <groupId>net.n2oapp.platform</groupId>
+            <artifactId>n2o-platform-test-autoconfigure</artifactId>
+        </dependency>
+        
     </dependencies>
 
     <build>

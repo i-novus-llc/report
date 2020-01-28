@@ -40,9 +40,8 @@ import java.util.List;
 public class ReportServiceRestImplTest extends TestCase {
 
     private static final String PATH = "/net/n2oapp/report/service/rest/";
-    // todo replace test templates use other
-    private static final String MASTER_TEMPLATE_FILE_NAME = "accrCommand";
-    private static final String DETAIL_TEMPLATE_FILE_NAME = "command";
+    private static final String MASTER_TEMPLATE_FILE_NAME = "masterReportTemplate";
+    private static final String DETAIL_TEMPLATE_FILE_NAME = "detailReportTemplate";
 
     @Value("${fileStorage.root}")
     private String fileStorageRoot;
@@ -53,12 +52,12 @@ public class ReportServiceRestImplTest extends TestCase {
     @Test
     @SuppressWarnings("unchecked")
     public void testLifecycle() throws IOException {
-        testCompile(MASTER_TEMPLATE_FILE_NAME);
         testCompile(DETAIL_TEMPLATE_FILE_NAME);
+        testCompile(MASTER_TEMPLATE_FILE_NAME);
 
         UriInfo uriInfo = Mockito.mock(UriInfo.class);
         MultivaluedMap queryParamMap = new MultivaluedHashMap();
-        queryParamMap.put("status", List.of("ACCREDITED"));
+        queryParamMap.put("title", List.of("abba"));
         Mockito.when(uriInfo.getQueryParameters()).thenReturn(queryParamMap);
 
         testGenerate("pdf", uriInfo);

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.11.0.final using JasperReports Library version 6.11.0-0c4056ccaa4d25a5a8c45672d2f764ea3498bebb  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Blank_A4_1" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="a9af354e-6caa-4d66-bcf7-7cedb68be304">
+	<parameter name="fsRoot" class="java.lang.String"/>
+	<parameter name="title" class="java.lang.String"/>
+	<parameter name="net.sf.jasperreports.json.source" class="java.lang.String">
+		<defaultValueExpression><![CDATA["https://en.wikipedia.org/w/api.php?action=query&format=json&list=search&srsearch=" + $P{title}]]></defaultValueExpression>
+	</parameter>
+	<queryString language="json">
+		<![CDATA[query.search]]>
+	</queryString>
+	<field name="title" class="java.lang.String">
+		<property name="net.sf.jasperreports.json.field.expression" value="title"/>
+		<fieldDescription><![CDATA[title]]></fieldDescription>
+	</field>
+	<field name="pageid" class="java.lang.Integer">
+		<property name="net.sf.jasperreports.json.field.expression" value="pageid"/>
+		<fieldDescription><![CDATA[pageid]]></fieldDescription>
+	</field>
+	<field name="size" class="java.lang.Integer">
+		<property name="net.sf.jasperreports.json.field.expression" value="size"/>
+		<fieldDescription><![CDATA[size]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="20" width="550" height="30" uuid="cead0bca-f0b1-4f36-b3b6-3dbeb44191e7"/>
+				<text><![CDATA[кириллица тест]]></text>
+			</staticText>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="43" splitType="Stretch">
+			<staticText>
+				<reportElement x="64" y="0" width="106" height="30" uuid="bfe5c7fd-ddc3-42b5-9e0c-a3ce4779133b">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="17867596-f21a-477f-a28e-598717a5f781"/>
+				</reportElement>
+				<text><![CDATA[Заголовок]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="-1" y="0" width="61" height="30" uuid="893cf5e1-5bf5-4483-83c5-cfc21f682d59">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="dd83f9b4-9f15-4c48-afe7-8561aec1960b"/>
+				</reportElement>
+				<text><![CDATA[ИД]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="181" y="0" width="368" height="30" uuid="89f65950-c5aa-4975-aabb-da68e7af89e0"/>
+				<text><![CDATA[another rest data (date and url)]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="60" splitType="Stretch">
+			<textField>
+				<reportElement x="66" y="6" width="106" height="30" uuid="00d44e22-6036-463c-9cbc-30ccd0ab2915">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="17867596-f21a-477f-a28e-598717a5f781"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{title}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="7" width="60" height="30" uuid="97e5853a-dd76-4363-9877-87d33139fd84">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="dd83f9b4-9f15-4c48-afe7-8561aec1960b"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{pageid}]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement x="181" y="6" width="369" height="29" uuid="d2da93b8-34f5-4ae4-ab87-2f01a0d12955"/>
+				<subreportParameter name="pageid">
+					<subreportParameterExpression><![CDATA[$F{pageid}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="net.sf.jasperreports.json.source">
+					<subreportParameterExpression><![CDATA["https://en.wikipedia.org/w/api.php?action=query&prop=info&inprop=url&format=json&pageids=" + $F{pageid}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportExpression><![CDATA[$P{fsRoot}+"/detailReportTemplate.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+</jasperReport>

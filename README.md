@@ -19,7 +19,7 @@
     ```
  
 2. **Настройка отчета.**<br/>
-*parameters.properties* - зависимые от стенда(и другие) параметры отчета.<br/> 
+*parameters.properties* - зависимые от стенда (и другие) параметры отчета.<br/> 
 
     При совпадении имен значения, передаваемые в queryParameters, более приоритетны, чем parameters.properties.
 
@@ -28,13 +28,24 @@
        
 ## Использование
 1. Создать шаблон отчета (.jrxml) с помощью Jaspersoft Studio или других средств.
-2. Результат скомпилировать и сохранить в файловое хранилище , выполнив POST запрос (на вход .jrxml)
-Примеры шаблонов:<br/>
-[accrCommand.jrxml](accrCommand.jrxml) <br/>
-[command.jrxml](command.jrxml) - сабрепорт, используемый в accrCommand.jrxml<br/>
-3. Сгенерировать отчет, выполнив GET запрос<br/> 
-Пример запроса:<br/>
-http://localhost:8080/api/report/accrCommand.pdf?status=ACCREDITED
+2. Результат скомпилировать и сохранить в файловое хранилище, выполнив POST запрос (на вход .jrxml)
+3. Сгенерировать отчет, выполнив GET запрос
+
+## Примеры
+
+1. Скомпилировать шаблоны (POST):<br/> 
+[accrCommand.jrxml](accrCommand.jrxml)<br/>
+[command.jrxml](command.jrxml) - сабрепорт, используемый в accrCommand.jrxml <br/><br/>
+Сформировать отчет (GET):<br/> 
+http://localhost:8080/api/report/accrCommand.pdf?status=ACCREDITED<br/><br/>
+
+2. Скомпилировать шаблон (POST):<br/>
+[periodReport.jrxml](periodReport.jrxml) <br/><br/>
+Сформировать отчет (GET):<br/>
+http://localhost:8080/api/report/periodReport.pdf?baseUrl=http://docker.one:8396/safekids/api&fromDt=2020-03-01&toDt=2020-03-15 <br/> 
+baseUrl можно прописать в parameters.properties,<br/>
+fromDt и toDt в данном примере должны быть в рамках одного месяца
+
 
 
 [JIRA]: https://jira.i-novus.ru/projects/REPENG

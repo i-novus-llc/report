@@ -62,8 +62,8 @@ public class ReportServiceRestImpl implements ReportService {
                     .ok(is, MediaType.APPLICATION_OCTET_STREAM_TYPE)
                     .header(CONTENT_DISPOSITION, buildContentDisposition(template, format))
                     .build();
-        } catch (JRException|IOException e) {
-            throw new ReportException("Failed to generate report", e);
+        } catch (Exception e) {
+            throw new ReportException("Failed to generate report. " + e.getMessage(), e);
         }
     }
 
@@ -81,10 +81,10 @@ public class ReportServiceRestImpl implements ReportService {
             try (InputStream iss = new ByteArrayInputStream(os.toByteArray())) {
                 fileStorage.saveContentWithFullPath(iss, fileName + withLeadingDot(JASPER_EXTENSION));
             }
-        } catch (JRException e) {
-            throw new ReportException("Failed to compile report template", e);
         } catch (IOException e) {
-            throw new ReportException("Failed to save compiled report template (.jasper)", e);
+            throw new ReportException("Failed to save compiled report template (.jasper)" + e.getMessage(), e);
+        }  catch (Exception e) {
+            throw new ReportException("Failed to compile report template. " + e.getMessage(), e);
         }
         return Response.ok().build();
     }

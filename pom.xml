@@ -27,6 +27,7 @@
         <filestorage.version>2.2</filestorage.version>
         <poi.version>4.1.1</poi.version>
         <antlr.version>2.7.7</antlr.version>
+        <fluent.version>4.5.12</fluent.version>
     </properties>
 
     <dependencyManagement>
@@ -65,6 +66,12 @@
                 <groupId>antlr</groupId>
                 <artifactId>antlr</artifactId>
                 <version>${antlr.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>fluent-hc</artifactId>
+                <version>${fluent.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

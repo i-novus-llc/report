@@ -42,7 +42,7 @@ http://localhost:8080/api/report/accrCommand.pdf?status=ACCREDITED<br/><br/>
 2. Скомпилировать шаблон (POST):<br/>
 [reportPeriod.jrxml](reportPeriod.jrxml) <br/><br/>
 Сформировать отчет (GET):
-http://localhost:8080/api/report/periodReport.pdf?baseUrl=http://docker.one:8396/safekids/api&fromDt=2020-03-01&toDt=2020-03-15 
+http://localhost:8080/api/report/periodReport.pdf?baseUrl=http://docker.one:8396/safekids/api&fromDt=2020-03-01&toDt=2020-03-15 <br/> 
 baseUrl можно прописать в parameters.properties,<br/>
 fromDt и toDt в данном примере должны быть в рамках одного месяца
 

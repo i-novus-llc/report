@@ -31,13 +31,13 @@
 2. Результат скомпилировать и сохранить в файловое хранилище, выполнив POST запрос (на вход .jrxml)
 3. Сгенерировать отчет, выполнив GET запрос
 
-##Примеры
+## Примеры
 
 1. Скомпилировать шаблоны (POST):<br/> 
 [accrCommand.jrxml](accrCommand.jrxml)<br/>
 [command.jrxml](command.jrxml) - сабрепорт, используемый в accrCommand.jrxml <br/><br/>
 Сформировать отчет (GET): 
-http://localhost:8080/api/report/accrCommand.pdf?status=ACCREDITED<br/><br/><br/>
+http://localhost:8080/api/report/accrCommand.pdf?status=ACCREDITED<br/><br/>
 
 2. Скомпилировать шаблон (POST):<br/>
 [reportPeriod.jrxml](reportPeriod.jrxml) <br/><br/>

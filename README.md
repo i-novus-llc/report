@@ -1,3 +1,14 @@
+# Требования
+- OpenJDK 11
+
+# Cтек технологий
+- Java 11
+- JAX-RS
+- Spring Boot 2.1
+- Spring Cloud Greenwich
+- N2O Platform 2
+
+
 [JIRA] | [CI]
 
 # N2O Cloud Report

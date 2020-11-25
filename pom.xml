@@ -6,8 +6,8 @@
 
     <parent>
         <groupId>net.n2oapp.platform</groupId>
-        <artifactId>n2o-platform-parent</artifactId>
-        <version>2.22</version>
+        <artifactId>n2o-boot-platform-parent</artifactId>
+        <version>4.2.3</version>
     </parent>
 
     <groupId>net.n2oapp.cloud</groupId>
@@ -24,7 +24,7 @@
         <n2o.version>7.4.9</n2o.version>
         <jasperreports.version>6.11.0</jasperreports.version>
         <lowagie.version>2.1.7</lowagie.version>
-        <filestorage.version>2.2</filestorage.version>
+        <filestorage.version>2.3</filestorage.version>
         <poi.version>4.1.1</poi.version>
         <antlr.version>2.7.7</antlr.version>
         <fluent.version>4.5.12</fluent.version>

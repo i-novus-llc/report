@@ -1,4 +1,4 @@
-package net.n2oapp.report.service.filestorage;
+package net.n2oapp.cloud.report.service.filestorage;
 
 import org.springframework.stereotype.Component;
 import ru.i_novus.common.file.storage.BaseFileStorage;

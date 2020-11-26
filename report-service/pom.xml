@@ -11,13 +11,18 @@
 
     <artifactId>report-service</artifactId>
 
+    <properties>
+        <maven.deploy.skip>true</maven.deploy.skip>
+        <jacoco.skip>false</jacoco.skip>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>net.n2oapp.cloud</groupId>
             <artifactId>report-api</artifactId>
             <version>${project.version}</version>
         </dependency>
-        
+
         <dependency>
             <groupId>net.n2oapp.platform</groupId>
             <artifactId>n2o-platform-starter-ms</artifactId>
@@ -82,7 +87,7 @@
             <groupId>net.n2oapp.platform</groupId>
             <artifactId>n2o-platform-test-autoconfigure</artifactId>
         </dependency>
-        
+
     </dependencies>
 
     <build>

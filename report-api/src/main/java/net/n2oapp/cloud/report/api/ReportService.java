@@ -1,4 +1,4 @@
-package net.n2oapp.report.api;
+package net.n2oapp.cloud.report.api;
 
 import io.swagger.annotations.*;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;

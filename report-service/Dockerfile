@@ -1,4 +1,4 @@
-FROM openjdk:11-slim-sid
+FROM inovus/openjdk:14-jdk
 
 EXPOSE 8080
 

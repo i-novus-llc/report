@@ -1,9 +1,9 @@
-package net.n2oapp.report.service.rest;
+package net.n2oapp.cloud.report.service.rest;
 
 import junit.framework.TestCase;
 import net.n2oapp.platform.test.autoconfigure.DefinePort;
-import net.n2oapp.report.api.ReportService;
-import net.n2oapp.report.service.ReportApplication;
+import net.n2oapp.cloud.report.api.ReportService;
+import net.n2oapp.cloud.report.service.ReportApplication;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.apache.cxf.jaxrs.ext.multipart.ContentDisposition;
 import org.junit.After;
@@ -32,7 +32,7 @@ import java.util.List;
         properties = {
                 "fileStorage.root=./fs",
                 "cxf.jaxrs.component-scan=true",
-                "cxf.jaxrs.client.classes-scan-packages=net.n2oapp.report",
+                "cxf.jaxrs.client.classes-scan-packages=net.n2oapp.cloud.report",
                 "jaxrs.log-in=false",
                 "jaxrs.log-out=false"
         })

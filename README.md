@@ -1,12 +1,14 @@
+[![Apache License 2](https://img.shields.io/hexpm/l/plug.svg?style=flat)](http://www.apache.org/licenses/LICENSE-2.0)
+
 # Требования
-- OpenJDK 11
+- OpenJDK 14
 
 # Cтек технологий
-- Java 11
+- Java 14
 - JAX-RS
 - Spring Boot 2.1
 - Spring Cloud Greenwich
-- N2O Platform 2
+- N2O Platform 4
 
 
 [JIRA] | [CI]

@@ -1,4 +1,4 @@
-package net.n2oapp.report.exception;
+package net.n2oapp.cloud.report.exception;
 
 public class ReportException extends RuntimeException {
 

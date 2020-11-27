@@ -1,8 +1,8 @@
-package net.n2oapp.report.service.rest;
+package net.n2oapp.cloud.report.service.rest;
 
-import net.n2oapp.report.api.ReportService;
-import net.n2oapp.report.exception.ReportException;
-import net.n2oapp.report.service.filestorage.FileStorage;
+import net.n2oapp.cloud.report.api.ReportService;
+import net.n2oapp.cloud.report.exception.ReportException;
+import net.n2oapp.cloud.report.service.filestorage.FileStorage;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperFillManager;
@@ -122,7 +122,7 @@ public class ReportServiceRestImpl implements ReportService {
     }
 
     private String getFileNameWithoutExtension(String fileName) {
-        int indexOfExt = fileName.lastIndexOf(".");
+        int indexOfExt = fileName.lastIndexOf('.');
         return indexOfExt < 0
                 ? fileName
                 : fileName.substring(0, indexOfExt);

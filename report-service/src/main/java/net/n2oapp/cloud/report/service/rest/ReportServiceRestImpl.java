@@ -2,8 +2,6 @@ package net.n2oapp.cloud.report.service.rest;
 
 import net.n2oapp.cloud.report.api.ReportService;
 import net.n2oapp.cloud.report.exception.ReportException;
-import net.n2oapp.cloud.report.service.data.DataSourceValue;
-import net.n2oapp.cloud.report.service.data.ReportDataSourceProperties;
 import net.n2oapp.cloud.report.service.filestorage.FileStorage;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.export.JRCsvExporter;
@@ -20,7 +18,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.stereotype.Controller;
 
 import javax.sql.DataSource;
@@ -33,7 +30,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;

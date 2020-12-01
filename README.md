@@ -60,6 +60,39 @@ http://localhost:8080/api/report/periodReport.pdf?baseUrl=http://docker.one:8396
 baseUrl можно прописать в parameters.properties,<br/>
 fromDt и toDt в данном примере должны быть в рамках одного месяца
 
+## Подключение к базе данных.
+Имеется возможность настраивать несколько подключений к БД. Нужно указать
+``` 
+ report.data.values[{index}].name - название, служит для привязки отчета
+ report.data.values[{index}].driver - драйвер DataSource
+ report.data.values[{index}].username - пользователь бд
+ report.data.values[{index}].password - пароль бд
+ report.data.values[{index}].url - url бд
+ где {index} - порядковый номер подключения к бд
+ ```
+ Настройка происходит стандатным способом для Spring Boot приложений через properties/yml файлы. Например можно прописать в application.properties
+ ```properties
+report.data.values[0].name=lkzeo
+report.data.values[0].driver=org.postgresql.Driver
+report.data.values[0].username=lk_user
+report.data.values[0].password=lk_psw
+report.data.values[0].url=jdbc:postgresql://localhost:5432/lkzeo
+
+report.data.values[1].name=idm
+report.data.values[1].driver=org.postgresql.Driver
+report.data.values[1].username=idm_user
+report.data.values[1].password=idm_psw
+report.data.values[1].url=jdbc:postgresql://localhost:5432/idm
+```
+Существуют два способа связать отчет с конкретным датасорсом 
+1. В запросе вызова отчета указать параметр REPORT_DATASOURCE_NAME, например  http://localhost:8080/api/report/report.pdf?REPORT_DATASOURCE_NAME=lkzeo
+2. В параметрах самого .jrxml - файла прописать REPORT_DATASOURCE_NAME, например 
+```xml
+<parameter name="REPORT_DATASOURCE_NAME" class="java.lang.String">
+		<defaultValueExpression><![CDATA[lkzeo]]></defaultValueExpression>
+	</parameter>
+```
+
 
 
 [JIRA]: https://jira.i-novus.ru/projects/REPENG

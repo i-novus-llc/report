@@ -3,10 +3,7 @@ package net.n2oapp.cloud.report.service.rest;
 import net.n2oapp.cloud.report.api.ReportService;
 import net.n2oapp.cloud.report.exception.ReportException;
 import net.n2oapp.cloud.report.service.filestorage.FileStorage;
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperCompileManager;
-import net.sf.jasperreports.engine.JasperFillManager;
-import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.export.JRCsvExporter;
 import net.sf.jasperreports.engine.export.JRPdfExporter;
 import net.sf.jasperreports.engine.export.JRXlsExporter;
@@ -15,6 +12,7 @@ import net.sf.jasperreports.engine.export.oasis.JROdsExporter;
 import net.sf.jasperreports.engine.export.oasis.JROdtExporter;
 import net.sf.jasperreports.engine.export.ooxml.JRDocxExporter;
 import net.sf.jasperreports.engine.export.ooxml.JRXlsxExporter;
+import net.sf.jasperreports.engine.util.JRLoader;
 import net.sf.jasperreports.export.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
@@ -22,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 
+import javax.sql.DataSource;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
@@ -30,6 +29,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -46,12 +46,16 @@ public class ReportServiceRestImpl implements ReportService {
     private static final String JASPER_EXTENSION = "jasper";
     private static final String FILE_STORAGE_ROOT_PROPERTY_NAME = "fsRoot";
     private static final String PARAMETERS_PROPERTIES = "parameters.properties";
+    private static final String REPORT_DATASOURCE_NAME = "REPORT_DATASOURCE_NAME";
 
     @Value("${fileStorage.root}")
     private String fileStorageRoot;
 
     @Autowired
     private FileStorage fileStorage;
+
+    @Autowired
+    private Map<String, DataSource> dataSourcesWithName;
 
     @Override
     public Response generateReport(String template, String format, UriInfo ui) {
@@ -137,11 +141,18 @@ public class ReportServiceRestImpl implements ReportService {
     }
 
     @SuppressWarnings("unchecked")
-    private InputStream generate(String template, String format, Map<String, Object> params) throws JRException, IOException {
+    private InputStream generate(String template, String format, Map<String, Object> params) throws JRException, IOException, SQLException {
         InputStream templateFileIO = fileStorage.getContent(template + withLeadingDot(JASPER_EXTENSION));
-
+        JasperReport report = (JasperReport) JRLoader.loadObject(templateFileIO);
         try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
-            JasperPrint jasperPrint = JasperFillManager.fillReport(templateFileIO, params);
+            DataSource dataSource = getDataSource(report, params);
+            JasperPrint jasperPrint;
+            if(dataSource != null) {
+            jasperPrint = JasperFillManager.fillReport(report, params, dataSource.getConnection());
+            } else {
+                jasperPrint = JasperFillManager.fillReport(report, params);
+            }
+
 
             Exporter exporter;
             ExporterOutput output;
@@ -196,4 +207,27 @@ public class ReportServiceRestImpl implements ReportService {
             return new ByteArrayInputStream(os.toByteArray());
         }
     }
+
+    private String getReportDatasourceName(JasperReport report,  Map<String, Object> params) {
+        if(params.containsKey(REPORT_DATASOURCE_NAME)) {
+            return params.get(REPORT_DATASOURCE_NAME).toString();
+        }
+
+        for(JRParameter jrParameter : report.getParameters()) {
+            if(jrParameter.getName().equals(REPORT_DATASOURCE_NAME)) {
+                return jrParameter.getDefaultValueExpression().getText();
+            }
+        }
+
+        return null;
+    }
+
+    private DataSource getDataSource(JasperReport report, Map<String, Object> params) {
+        String dataSourceName = getReportDatasourceName(report, params);
+        if (dataSourceName == null) {
+            return null;
+        }
+        return dataSourcesWithName.get(dataSourceName);
+    }
+
 }

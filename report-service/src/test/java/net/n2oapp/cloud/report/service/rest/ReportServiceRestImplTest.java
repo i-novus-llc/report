@@ -13,6 +13,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.sql.DataSource;
@@ -25,19 +26,14 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(
         classes = ReportApplication.class,
-        webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT,
-        properties = {
-                "fileStorage.root=./fs",
-                "cxf.jaxrs.component-scan=true",
-                "cxf.jaxrs.client.classes-scan-packages=net.n2oapp.cloud.report",
-                "jaxrs.log-in=false",
-                "jaxrs.log-out=false"
-        })
+        webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@TestPropertySource(locations = {"classpath:application-test.properties"})
 @DefinePort
 public class ReportServiceRestImplTest extends TestCase {
 
@@ -45,6 +41,7 @@ public class ReportServiceRestImplTest extends TestCase {
     private static final String MASTER_TEMPLATE_FILE_NAME = "masterReportTemplate";
     private static final String DETAIL_TEMPLATE_FILE_NAME = "detailReportTemplate";
     private static final String EXAMPLE_TEMPLATE_FILE_NAME = "exampleReportTemplate";
+    private static final String IN_MEMORY_DB_NAME = "testdb";
 
     @Value("${fileStorage.root}")
     private String fileStorageRoot;
@@ -53,16 +50,18 @@ public class ReportServiceRestImplTest extends TestCase {
     private ReportService reportService;
 
     @Autowired
-    private DataSource dataSource;
+    private Map<String, DataSource> dataSourcesWithName;
 
     @Test
     public void testGetReportFromInMemoryDb() throws Exception {
-        initDataForReport();
         testCompile(EXAMPLE_TEMPLATE_FILE_NAME);
+
+        DataSource dataSource = dataSourcesWithName.get(IN_MEMORY_DB_NAME);
+        initData(dataSource);
 
         UriInfo uriInfo = Mockito.mock(UriInfo.class);
         MultivaluedMap queryParamMap = new MultivaluedHashMap();
-        queryParamMap.put("REPORT_DATASOURCE_NAME", List.of("dataSource"));
+        queryParamMap.put("REPORT_DATASOURCE_NAME", List.of(IN_MEMORY_DB_NAME));
         Mockito.when(uriInfo.getQueryParameters()).thenReturn(queryParamMap);
 
         try (Response response = reportService.generateReport(EXAMPLE_TEMPLATE_FILE_NAME, "csv", uriInfo)) {
@@ -73,22 +72,12 @@ public class ReportServiceRestImplTest extends TestCase {
 
     }
 
-    private void initDataForReport() throws SQLException {
-        Connection connection = dataSource.getConnection();
-        connection.createStatement().execute(getSqlStatement());
-        connection.close();
-    }
-
     private void compareContents(Response response) {
         ByteArrayInputStream inputStream = (ByteArrayInputStream) response.getEntity();
         String[] employees = new String(inputStream.readAllBytes()).split("\n");
-
-        /*
-        report content starts with zero width no-break space (ZWNBSP), a deprecated use of the Unicode character at code point U+FEFF
-        first string has this symbol
-         */
-        assertTrue(employees[0].contains("Michael"));
-
+        String firstEmployee = employees[0];
+        String firstEmployeeName = firstEmployee.substring(employees[0].indexOf("Michael"));
+        assertEquals("Michael", firstEmployeeName);
         assertEquals("25", employees[1]);
         assertEquals("1000", employees[2]);
         assertEquals("John", employees[3]);
@@ -135,6 +124,12 @@ public class ReportServiceRestImplTest extends TestCase {
             assertEquals(response.getStatus(), 200);
             assertTrue(response.getHeaders().get(HttpHeaders.CONTENT_DISPOSITION).get(0).toString().contains(MASTER_TEMPLATE_FILE_NAME + "." + format));
         }
+    }
+
+    private void initData(DataSource dataSource) throws SQLException {
+        Connection connection = dataSource.getConnection();
+        connection.createStatement().execute(getSqlStatement());
+        connection.close();
     }
 
     private String getSqlStatement() {

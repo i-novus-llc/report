@@ -29,10 +29,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -144,7 +143,7 @@ public class ReportServiceRestImpl implements ReportService {
     private InputStream generate(String template, String format, Map<String, Object> params) throws JRException, IOException, SQLException {
         InputStream templateFileIO = fileStorage.getContent(template + withLeadingDot(JASPER_EXTENSION));
         JasperReport report = (JasperReport) JRLoader.loadObject(templateFileIO);
-        castApplicationIdToInteger(params);
+        getParametersOfRequiredType(params, report);
         try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
             DataSource dataSource = getDataSource(report, params);
             JasperPrint jasperPrint;
@@ -209,10 +208,17 @@ public class ReportServiceRestImpl implements ReportService {
         }
     }
 
-    private void castApplicationIdToInteger(Map<String, Object> params) {
-        Object applicationId = params.get("application_id");
-        if (applicationId instanceof String) {
-            params.put("application_id", Integer.valueOf((String) applicationId));
+    private void getParametersOfRequiredType(Map<String, Object> params, JasperReport report) {
+        Iterator<JRParameter> iterator = Arrays.stream(report.getParameters()).iterator();
+        while (iterator.hasNext()) {
+            JRParameter jrParameter = iterator.next();
+            try {
+                jrParameter.getValueClass().getDeclaredConstructor(params.get("application_id").getClass())
+                        .newInstance(params.get("application_id"));
+
+            } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
+                e.printStackTrace();
+            }
         }
     }
 

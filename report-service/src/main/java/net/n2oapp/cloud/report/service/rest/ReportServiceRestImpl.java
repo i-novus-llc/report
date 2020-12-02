@@ -87,7 +87,7 @@ public class ReportServiceRestImpl implements ReportService {
             }
         } catch (IOException e) {
             throw new ReportException("Failed to save compiled report template (.jasper)" + e.getMessage(), e);
-        }  catch (Exception e) {
+        } catch (Exception e) {
             throw new ReportException("Failed to compile report template. " + e.getMessage(), e);
         }
         return Response.ok().build();
@@ -144,11 +144,12 @@ public class ReportServiceRestImpl implements ReportService {
     private InputStream generate(String template, String format, Map<String, Object> params) throws JRException, IOException, SQLException {
         InputStream templateFileIO = fileStorage.getContent(template + withLeadingDot(JASPER_EXTENSION));
         JasperReport report = (JasperReport) JRLoader.loadObject(templateFileIO);
+        castApplicationIdToInteger(params);
         try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
             DataSource dataSource = getDataSource(report, params);
             JasperPrint jasperPrint;
-            if(dataSource != null) {
-            jasperPrint = JasperFillManager.fillReport(report, params, dataSource.getConnection());
+            if (dataSource != null) {
+                jasperPrint = JasperFillManager.fillReport(report, params, dataSource.getConnection());
             } else {
                 jasperPrint = JasperFillManager.fillReport(report, params);
             }
@@ -208,13 +209,20 @@ public class ReportServiceRestImpl implements ReportService {
         }
     }
 
-    private String getReportDatasourceName(JasperReport report,  Map<String, Object> params) {
-        if(params.containsKey(REPORT_DATASOURCE_NAME)) {
+    private void castApplicationIdToInteger(Map<String, Object> params) {
+        Object applicationId = params.get("application_id");
+        if (applicationId instanceof String) {
+            params.put("application_id", Integer.valueOf((String) applicationId));
+        }
+    }
+
+    private String getReportDatasourceName(JasperReport report, Map<String, Object> params) {
+        if (params.containsKey(REPORT_DATASOURCE_NAME)) {
             return params.get(REPORT_DATASOURCE_NAME).toString();
         }
 
-        for(JRParameter jrParameter : report.getParameters()) {
-            if(jrParameter.getName().equals(REPORT_DATASOURCE_NAME)) {
+        for (JRParameter jrParameter : report.getParameters()) {
+            if (jrParameter.getName().equals(REPORT_DATASOURCE_NAME)) {
                 return jrParameter.getDefaultValueExpression().getText();
             }
         }

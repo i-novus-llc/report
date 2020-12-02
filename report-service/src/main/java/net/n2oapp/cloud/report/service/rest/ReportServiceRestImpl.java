@@ -2,6 +2,7 @@ package net.n2oapp.cloud.report.service.rest;
 
 import net.n2oapp.cloud.report.api.ReportService;
 import net.n2oapp.cloud.report.exception.ReportException;
+import net.n2oapp.cloud.report.service.exception.ReportGenerateException;
 import net.n2oapp.cloud.report.service.filestorage.FileStorage;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.export.JRCsvExporter;
@@ -29,10 +30,13 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
+import java.util.stream.Stream;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -87,7 +91,7 @@ public class ReportServiceRestImpl implements ReportService {
             }
         } catch (IOException e) {
             throw new ReportException("Failed to save compiled report template (.jasper)" + e.getMessage(), e);
-        }  catch (Exception e) {
+        } catch (Exception e) {
             throw new ReportException("Failed to compile report template. " + e.getMessage(), e);
         }
         return Response.ok().build();
@@ -144,11 +148,12 @@ public class ReportServiceRestImpl implements ReportService {
     private InputStream generate(String template, String format, Map<String, Object> params) throws JRException, IOException, SQLException {
         InputStream templateFileIO = fileStorage.getContent(template + withLeadingDot(JASPER_EXTENSION));
         JasperReport report = (JasperReport) JRLoader.loadObject(templateFileIO);
+        params = getCastedParams(params, report);
         try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
             DataSource dataSource = getDataSource(report, params);
             JasperPrint jasperPrint;
-            if(dataSource != null) {
-            jasperPrint = JasperFillManager.fillReport(report, params, dataSource.getConnection());
+            if (dataSource != null) {
+                jasperPrint = JasperFillManager.fillReport(report, params, dataSource.getConnection());
             } else {
                 jasperPrint = JasperFillManager.fillReport(report, params);
             }
@@ -208,13 +213,35 @@ public class ReportServiceRestImpl implements ReportService {
         }
     }
 
-    private String getReportDatasourceName(JasperReport report,  Map<String, Object> params) {
-        if(params.containsKey(REPORT_DATASOURCE_NAME)) {
+    private Map<String, Object> getCastedParams(Map<String, Object> params, JasperReport report) {
+        Map<String, Object> result = new HashMap<>();
+        for (Map.Entry<String, Object> entry : params.entrySet()) {
+            Optional<JRParameter> jrParameter = Stream.of(report.getParameters()).filter(param -> param.getName().equals(entry.getKey())).findAny();
+            if (jrParameter.isPresent()) {
+                result.put(entry.getKey(), castParam(entry.getValue(), jrParameter.get()));
+            } else {
+                result.put(entry.getKey(), entry.getValue());
+            }
+        }
+        return result;
+    }
+
+    private Object castParam(Object value, JRParameter jrParameter) {
+        try {
+            return jrParameter.getValueClass()
+                    .getDeclaredConstructor(value.getClass()).newInstance(value);
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            throw new ReportGenerateException(e);
+        }
+    }
+
+    private String getReportDatasourceName(JasperReport report, Map<String, Object> params) {
+        if (params.containsKey(REPORT_DATASOURCE_NAME)) {
             return params.get(REPORT_DATASOURCE_NAME).toString();
         }
 
-        for(JRParameter jrParameter : report.getParameters()) {
-            if(jrParameter.getName().equals(REPORT_DATASOURCE_NAME)) {
+        for (JRParameter jrParameter : report.getParameters()) {
+            if (jrParameter.getName().equals(REPORT_DATASOURCE_NAME)) {
                 return jrParameter.getDefaultValueExpression().getText();
             }
         }

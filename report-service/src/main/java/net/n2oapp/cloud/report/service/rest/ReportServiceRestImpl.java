@@ -2,6 +2,7 @@ package net.n2oapp.cloud.report.service.rest;
 
 import net.n2oapp.cloud.report.api.ReportService;
 import net.n2oapp.cloud.report.exception.ReportException;
+import net.n2oapp.cloud.report.service.exception.ReportGenerateException;
 import net.n2oapp.cloud.report.service.filestorage.FileStorage;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.export.JRCsvExporter;
@@ -31,7 +32,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Properties;
+import java.util.stream.Stream;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -143,7 +148,7 @@ public class ReportServiceRestImpl implements ReportService {
     private InputStream generate(String template, String format, Map<String, Object> params) throws JRException, IOException, SQLException {
         InputStream templateFileIO = fileStorage.getContent(template + withLeadingDot(JASPER_EXTENSION));
         JasperReport report = (JasperReport) JRLoader.loadObject(templateFileIO);
-        getParametersOfRequiredType(params, report);
+        params = getCastedParams(params, report);
         try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
             DataSource dataSource = getDataSource(report, params);
             JasperPrint jasperPrint;
@@ -208,17 +213,25 @@ public class ReportServiceRestImpl implements ReportService {
         }
     }
 
-    private void getParametersOfRequiredType(Map<String, Object> params, JasperReport report) {
-        Iterator<JRParameter> iterator = Arrays.stream(report.getParameters()).iterator();
-        while (iterator.hasNext()) {
-            JRParameter jrParameter = iterator.next();
-            try {
-                jrParameter.getValueClass().getDeclaredConstructor(params.get("application_id").getClass())
-                        .newInstance(params.get("application_id"));
-
-            } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
-                e.printStackTrace();
+    private Map<String, Object> getCastedParams(Map<String, Object> params, JasperReport report) {
+        Map<String, Object> result = new HashMap<>();
+        for (Map.Entry<String, Object> entry : params.entrySet()) {
+            Optional<JRParameter> jrParameter = Stream.of(report.getParameters()).filter(param -> param.getName().equals(entry.getKey())).findAny();
+            if (jrParameter.isPresent()) {
+                result.put(entry.getKey(), castParam(entry.getValue(), jrParameter.get()));
+            } else {
+                result.put(entry.getKey(), entry.getValue());
             }
+        }
+        return result;
+    }
+
+    private Object castParam(Object value, JRParameter jrParameter) {
+        try {
+            return jrParameter.getValueClass()
+                    .getDeclaredConstructor(value.getClass()).newInstance(value);
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            throw new ReportGenerateException(e);
         }
     }
 

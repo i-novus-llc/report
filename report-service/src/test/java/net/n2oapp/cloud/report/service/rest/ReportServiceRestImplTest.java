@@ -39,7 +39,7 @@ public class ReportServiceRestImplTest extends TestCase {
     private static final String MASTER_TEMPLATE_FILE_NAME = "masterReportTemplate";
     private static final String DETAIL_TEMPLATE_FILE_NAME = "detailReportTemplate";
     private static final String EXAMPLE_TEMPLATE_FILE_NAME = "exampleReportTemplate";
-    private static final String IN_MEMORY_DB_NAME = "testdb";
+    private static final String IN_MEMORY_DB_NAME = "in_memory_db";
 
     @Value("${fileStorage.root}")
     private String fileStorageRoot;
@@ -48,7 +48,7 @@ public class ReportServiceRestImplTest extends TestCase {
     private ReportService reportService;
 
     @Test
-    public void testGetReportFromInMemoryDb() throws Exception {
+    public void testGetCsvReportFromInMemoryDb() throws Exception {
         testCompile(EXAMPLE_TEMPLATE_FILE_NAME);
 
         UriInfo uriInfo = Mockito.mock(UriInfo.class);
@@ -66,16 +66,17 @@ public class ReportServiceRestImplTest extends TestCase {
 
     private void compareContents(Response response) {
         ByteArrayInputStream inputStream = (ByteArrayInputStream) response.getEntity();
-        String[] employees = new String(inputStream.readAllBytes()).split("\n");
+        String content = new String(inputStream.readAllBytes());
+        String[] employees = content.split("\n");
         String firstEmployee = employees[0];
-        String firstEmployeeName = firstEmployee.substring(employees[0].indexOf("Michael"));
-        assertEquals("Michael", firstEmployeeName);
+        String firstEmployeeName = firstEmployee.substring(employees[0].indexOf("Misha"));
+        assertEquals("Misha", firstEmployeeName);
         assertEquals("25", employees[1]);
         assertEquals("1000", employees[2]);
-        assertEquals("John", employees[3]);
+        assertEquals("Sasha", employees[3]);
         assertEquals("30", employees[4]);
         assertEquals("1500", employees[5]);
-        assertEquals("Tom", employees[6]);
+        assertEquals("Kolya", employees[6]);
         assertEquals("36", employees[7]);
         assertEquals("2000", employees[8]);
     }

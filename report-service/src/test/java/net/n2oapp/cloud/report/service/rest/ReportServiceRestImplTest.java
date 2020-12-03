@@ -1,9 +1,9 @@
 package net.n2oapp.cloud.report.service.rest;
 
 import junit.framework.TestCase;
-import net.n2oapp.platform.test.autoconfigure.DefinePort;
 import net.n2oapp.cloud.report.api.ReportService;
 import net.n2oapp.cloud.report.service.ReportApplication;
+import net.n2oapp.platform.test.autoconfigure.DefinePort;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.apache.cxf.jaxrs.ext.multipart.ContentDisposition;
 import org.junit.After;
@@ -13,9 +13,11 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.ws.rs.core.*;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,26 +30,56 @@ import java.util.List;
 @RunWith(SpringRunner.class)
 @SpringBootTest(
         classes = ReportApplication.class,
-        webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT,
-        properties = {
-                "fileStorage.root=./fs",
-                "cxf.jaxrs.component-scan=true",
-                "cxf.jaxrs.client.classes-scan-packages=net.n2oapp.cloud.report",
-                "jaxrs.log-in=false",
-                "jaxrs.log-out=false"
-        })
+        webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@TestPropertySource(locations = {"classpath:application-test.properties"})
 @DefinePort
 public class ReportServiceRestImplTest extends TestCase {
 
     private static final String PATH = "/net/n2oapp/report/service/rest/";
     private static final String MASTER_TEMPLATE_FILE_NAME = "masterReportTemplate";
     private static final String DETAIL_TEMPLATE_FILE_NAME = "detailReportTemplate";
+    private static final String EXAMPLE_TEMPLATE_FILE_NAME = "exampleReportTemplate";
+    private static final String IN_MEMORY_DB_NAME = "testdb";
 
     @Value("${fileStorage.root}")
     private String fileStorageRoot;
 
     @Autowired
     private ReportService reportService;
+
+    @Test
+    public void testGetReportFromInMemoryDb() throws Exception {
+        testCompile(EXAMPLE_TEMPLATE_FILE_NAME);
+
+        UriInfo uriInfo = Mockito.mock(UriInfo.class);
+        MultivaluedMap queryParamMap = new MultivaluedHashMap();
+        queryParamMap.put("REPORT_DATASOURCE_NAME", List.of(IN_MEMORY_DB_NAME));
+        Mockito.when(uriInfo.getQueryParameters()).thenReturn(queryParamMap);
+
+        try (Response response = reportService.generateReport(EXAMPLE_TEMPLATE_FILE_NAME, "csv", uriInfo)) {
+            assertEquals(response.getStatus(), 200);
+            assertTrue(response.getHeaders().get(HttpHeaders.CONTENT_DISPOSITION).get(0).toString().contains(EXAMPLE_TEMPLATE_FILE_NAME + "." + "csv"));
+            compareContents(response);
+        }
+
+    }
+
+    private void compareContents(Response response) {
+        ByteArrayInputStream inputStream = (ByteArrayInputStream) response.getEntity();
+        String[] employees = new String(inputStream.readAllBytes()).split("\n");
+        String firstEmployee = employees[0];
+        String firstEmployeeName = firstEmployee.substring(employees[0].indexOf("Michael"));
+        assertEquals("Michael", firstEmployeeName);
+        assertEquals("25", employees[1]);
+        assertEquals("1000", employees[2]);
+        assertEquals("John", employees[3]);
+        assertEquals("30", employees[4]);
+        assertEquals("1500", employees[5]);
+        assertEquals("Tom", employees[6]);
+        assertEquals("36", employees[7]);
+        assertEquals("2000", employees[8]);
+    }
+
 
     @Test
     @SuppressWarnings("unchecked")
@@ -63,11 +95,11 @@ public class ReportServiceRestImplTest extends TestCase {
         testGenerate("pdf", uriInfo);
         testGenerate("xml", uriInfo);
         testGenerate("csv", uriInfo);
-        testGenerate( "xls", uriInfo);
-        testGenerate( "xlsx", uriInfo);
-        testGenerate( "docx", uriInfo);
-        testGenerate( "odt", uriInfo);
-        testGenerate( "ods", uriInfo);
+        testGenerate("xls", uriInfo);
+        testGenerate("xlsx", uriInfo);
+        testGenerate("docx", uriInfo);
+        testGenerate("odt", uriInfo);
+        testGenerate("ods", uriInfo);
     }
 
     private void testCompile(String templateFileName) throws IOException {

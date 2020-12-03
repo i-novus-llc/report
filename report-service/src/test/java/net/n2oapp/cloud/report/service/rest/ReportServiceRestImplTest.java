@@ -16,18 +16,16 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.sql.DataSource;
 import javax.ws.rs.core.*;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(
@@ -49,15 +47,9 @@ public class ReportServiceRestImplTest extends TestCase {
     @Autowired
     private ReportService reportService;
 
-    @Autowired
-    private Map<String, DataSource> dataSourcesWithName;
-
     @Test
     public void testGetReportFromInMemoryDb() throws Exception {
         testCompile(EXAMPLE_TEMPLATE_FILE_NAME);
-
-        DataSource dataSource = dataSourcesWithName.get(IN_MEMORY_DB_NAME);
-        initData(dataSource);
 
         UriInfo uriInfo = Mockito.mock(UriInfo.class);
         MultivaluedMap queryParamMap = new MultivaluedHashMap();
@@ -124,18 +116,6 @@ public class ReportServiceRestImplTest extends TestCase {
             assertEquals(response.getStatus(), 200);
             assertTrue(response.getHeaders().get(HttpHeaders.CONTENT_DISPOSITION).get(0).toString().contains(MASTER_TEMPLATE_FILE_NAME + "." + format));
         }
-    }
-
-    private void initData(DataSource dataSource) throws SQLException {
-        Connection connection = dataSource.getConnection();
-        connection.createStatement().execute(getSqlStatement());
-        connection.close();
-    }
-
-    private String getSqlStatement() {
-        return new BufferedReader(
-                new InputStreamReader(ReportServiceRestImplTest.class.getResourceAsStream("/script/createEmployees.sql")))
-                .lines().collect(Collectors.joining("\n"));
     }
 
     @After

@@ -89,11 +89,7 @@ report.data.values[1].url=jdbc:postgresql://localhost:5432/idm
 2. В параметрах самого .jrxml - файла прописать REPORT_DATASOURCE_NAME, например 
 ```xml
 <parameter name="REPORT_DATASOURCE_NAME" class="java.lang.String">
-		<defaultValueExpression><![CDATA[lkzeo]]></defaultValueExpression>
-	</parameter>
+    <defaultValueExpression><![CDATA[lkzeo]]></defaultValueExpression>
+</parameter>
 ```
 
-
-
-[JIRA]: https://jira.i-novus.ru/projects/REPENG
-[CI]: https://ci.i-novus.ru/view/n2o-components/job/report

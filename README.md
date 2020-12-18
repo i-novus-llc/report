@@ -93,3 +93,8 @@ report.data.values[1].url=jdbc:postgresql://localhost:5432/idm
 </parameter>
 ```
 
+## Вложенные изображения в base64
+Для декодирования вложенных изображений в формате base64 следует использовать org.apache.commons.codec.binary.Base64.decodeBase64. Например
+```xml
+<imageExpression class="java.io.InputStream"><![CDATA[new java.io.ByteArrayInputStream(org.apache.commons.codec.binary.Base64.decodeBase64($P{logo_base64}.getBytes()))]]></imageExpression>
+```

@@ -5,7 +5,6 @@ services:
     labels:
       filebeat: "springboot"
     environment:
-      SPRING_APPLICATION_NAME: "report-service"
       JAVA_OPTS: -Xmx400m
     ports:
     - "8080"

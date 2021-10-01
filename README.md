@@ -52,13 +52,19 @@
 [command.jrxml](command.jrxml) - сабрепорт, используемый в accrCommand.jrxml <br/><br/>
 Сформировать отчет (GET):<br/> 
 http://localhost:8080/api/report/accrCommand.pdf?status=ACCREDITED<br/><br/>
+Датасорс для главного репорта и сабрепорта заданы через параметр **net.sf.jasperreports.json.source** (http://jasperreports.sourceforge.net/config.reference.html).
+Датасорс сабрепорта должен задаваться в главном.<br/><br/> 
 
 2. Скомпилировать шаблон (POST):<br/>
 [periodReport.jrxml](periodReport.jrxml) <br/><br/>
 Сформировать отчет (GET):<br/>
 http://localhost:8080/api/report/periodReport.pdf?baseUrl=http://docker.one:8396/safekids/api&fromDt=2020-03-01&toDt=2020-03-15 <br/> 
 baseUrl можно прописать в parameters.properties,<br/>
-fromDt и toDt в данном примере должны быть в рамках одного месяца
+fromDt и toDt в данном примере должны быть в рамках одного месяца<br/><br/>
+В репорте определен subDataset, который используется для заполнения таблицы. Таких subDataset'ов может быть несколько, но при этом **датасорс уже не должен быть задан** (как в первом примере). 
+Обязательные параметры датасета: uriKey, authTypeKey, authParametersKey, languageKey, verbKey<br/><br/> 
+
+Источник данных для таблицы задан через property **net.sf.jasperreports.json.source** (http://jasperreports.sourceforge.net/config.reference.html)<br/><br/>
 
 ## Подключение к базе данных.
 Имеется возможность настраивать несколько подключений к БД. Нужно указать

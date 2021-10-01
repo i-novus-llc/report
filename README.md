@@ -47,6 +47,8 @@
 
 ## Примеры
 
+**Использование Data Adapter в шаблонах не требуется и приведет к ошибкам (net.sf.jasperreports.data.adapter).**
+
 1. Скомпилировать шаблоны (POST):<br/> 
 [accrCommand.jrxml](accrCommand.jrxml)<br/>
 [command.jrxml](command.jrxml) - сабрепорт, используемый в accrCommand.jrxml <br/><br/>

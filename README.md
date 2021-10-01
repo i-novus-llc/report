@@ -64,8 +64,6 @@ fromDt и toDt в данном примере должны быть в рамк�
 В репорте определен subDataset, который используется для заполнения таблицы. Таких subDataset'ов может быть несколько, но при этом **датасорс уже не должен быть задан** (как в первом примере). 
 Обязательные параметры датасета: uriKey, authTypeKey, authParametersKey, languageKey, verbKey<br/><br/> 
 
-Источник данных для таблицы задан через property **net.sf.jasperreports.json.source** (http://jasperreports.sourceforge.net/config.reference.html)<br/><br/>
-
 ## Подключение к базе данных.
 Имеется возможность настраивать несколько подключений к БД. Нужно указать
 ``` 

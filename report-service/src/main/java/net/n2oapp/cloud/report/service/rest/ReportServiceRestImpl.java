@@ -32,10 +32,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Properties;
+import java.util.*;
 import java.util.stream.Stream;
 
 import static java.util.Objects.isNull;
@@ -227,10 +224,30 @@ public class ReportServiceRestImpl implements ReportService {
     }
 
     private Object castParam(Object value, JRParameter jrParameter) {
+        if (!Collection.class.isAssignableFrom(jrParameter.getValueClass())) {
+            return castParamToType(value, jrParameter.getValueClass());
+        }
+        // в отчете параметр является коллекцией:
+        Collection<Object> result = new ArrayList<>();
+        if (Collection.class.isAssignableFrom(value.getClass())) {
+            // если value также является коллекцией, пытаемся закастить каждый элемент коллекции к
+            // возвращаемому getNestedType() типу
+            Collection<?> collection = (Collection<?>) value;
+            for (Object o : collection) {
+                result.add((jrParameter.getNestedType() == null) ? o : castParamToType(o, jrParameter.getNestedType()));
+            }
+        } else {
+            result.add(castParamToType(value, jrParameter.getValueClass()));
+        }
+        return result;
+    }
+
+    private Object castParamToType(Object value, Class<?> jrpParameterClass) {
         try {
-            return jrParameter.getValueClass()
+            return jrpParameterClass
                     .getDeclaredConstructor(value.getClass()).newInstance(value);
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+                 NoSuchMethodException e) {
             throw new ReportGenerateException(e);
         }
     }

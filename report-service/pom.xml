@@ -83,13 +83,13 @@
             <version>1.11</version>
         </dependency>
 
-        <dependency>
-            <groupId>com.jaspersoft.adapter.webservice</groupId>
-            <artifactId>jaspersoft-webservices-dataadapter</artifactId>
-            <version>1.0.1-SNAPSHOT</version>
-            <scope>system</scope>
-            <systemPath>${basedir}/lib/WebServiceDataAdapter.jar</systemPath>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.jaspersoft.adapter.webservice</groupId>-->
+<!--            <artifactId>jaspersoft-webservices-dataadapter</artifactId>-->
+<!--            <version>1.0.1-SNAPSHOT</version>-->
+<!--            <scope>system</scope>-->
+<!--            <systemPath>${pom.basedir}/lib/WebServiceDataAdapter.jar</systemPath>-->
+<!--        </dependency>-->
 
         <!--TEST-->
         <dependency>
@@ -110,10 +110,15 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <executable>true</executable>
-                    <includeSystemScope>true</includeSystemScope>
-                </configuration>
+                <executions>
+                    <execution>
+                        <configuration>
+                            <classifier>exec</classifier>
+                            <executable>true</executable>
+                            <includeSystemScope>true</includeSystemScope>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

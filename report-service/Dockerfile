@@ -1,8 +1,13 @@
-FROM inovus/openjdk:14-jdk
+FROM images.digitalms.ru/library/redos7c/jdk-17:17.0.1.0.12-1.30.0
+
+USER root
+
+RUN dnf install -y dejavu-serif-fonts curl \
+    && dnf clean all
+
+USER 10001
 
 EXPOSE 8080
-
-RUN apt-get update && apt-get install -y curl
 
 ARG JAR_FILE
 COPY ${JAR_FILE} app.jar

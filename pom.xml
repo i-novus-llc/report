@@ -5,7 +5,7 @@
     <parent>
         <groupId>net.n2oapp.platform</groupId>
         <artifactId>n2o-boot-platform-parent</artifactId>
-        <version>4.2.3</version>
+        <version>5.3.5</version>
     </parent>
 
     <groupId>net.n2oapp.cloud</groupId>
@@ -67,11 +67,10 @@
     </modules>
 
     <properties>
-        <n2o.version>7.4.9</n2o.version>
-        <jasperreports.version>6.16.0</jasperreports.version>
-        <lowagie.version>2.1.7</lowagie.version>
+        <jasperreports.version>6.21.4</jasperreports.version>
         <filestorage.version>2.3</filestorage.version>
-        <poi.version>4.1.1</poi.version>
+        <commons-io.version>2.16.1</commons-io.version>
+        <poi.version>5.3.0</poi.version>
         <antlr.version>2.7.7</antlr.version>
         <fluent.version>4.5.12</fluent.version>
     </properties>
@@ -94,12 +93,6 @@
                 <groupId>net.sf.jasperreports</groupId>
                 <artifactId>jasperreports-fonts</artifactId>
                 <version>${jasperreports.version}</version>
-            </dependency>
-            
-            <dependency>
-                <groupId>com.lowagie</groupId>
-                <artifactId>itext</artifactId>
-                <version>${lowagie.version}</version>
             </dependency>
 
             <dependency>

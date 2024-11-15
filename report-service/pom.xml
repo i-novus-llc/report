@@ -53,11 +53,6 @@
         </dependency>
 
         <dependency>
-            <groupId>com.lowagie</groupId>
-            <artifactId>itext</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
         </dependency>
@@ -88,14 +83,6 @@
             <version>1.11</version>
         </dependency>
 
-        <dependency>
-            <groupId>com.jaspersoft.adapter.webservice</groupId>
-            <artifactId>jaspersoft-webservices-dataadapter</artifactId>
-            <version>1.0.1-SNAPSHOT</version>
-            <scope>system</scope>
-            <systemPath>${basedir}/lib/WebServiceDataAdapter.jar</systemPath>
-        </dependency>
-
         <!--TEST-->
         <dependency>
             <groupId>net.n2oapp.platform</groupId>
@@ -115,12 +102,7 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <executable>true</executable>
-                    <includeSystemScope>true</includeSystemScope>
-                </configuration>
             </plugin>
         </plugins>
     </build>
-
 </project>

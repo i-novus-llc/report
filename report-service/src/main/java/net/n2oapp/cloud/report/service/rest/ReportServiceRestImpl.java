@@ -237,6 +237,7 @@ public class ReportServiceRestImpl implements ReportService {
                 result.add((jrParameter.getNestedType() == null) ? o : castParamToType(o, jrParameter.getNestedType()));
             }
         } else {
+            // если передано единичное значение параметра:
             result.add(castParamToType(value, jrParameter.getValueClass()));
         }
         return result;

@@ -1,2 +1,0 @@
-# Application Listeners
-org.springframework.context.ApplicationListener=net.n2oapp.cloud.report.service.TestBootstrapPropertiesApplicationListener

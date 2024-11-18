@@ -213,40 +213,51 @@ public class ReportServiceRestImpl implements ReportService {
     private Map<String, Object> getCastedParams(Map<String, Object> params, JasperReport report) {
         Map<String, Object> result = new HashMap<>();
         for (Map.Entry<String, Object> entry : params.entrySet()) {
-            Optional<JRParameter> jrParameter = Stream.of(report.getParameters()).filter(param -> param.getName().equals(entry.getKey())).findAny();
-            if (jrParameter.isPresent()) {
-                result.put(entry.getKey(), castParam(entry.getValue(), jrParameter.get()));
-            } else {
-                result.put(entry.getKey(), entry.getValue());
-            }
+            JRParameter jrParameter = findJRParameterByName(report, entry.getKey());
+            Object castedValue = (jrParameter != null)
+                    ? castParam(entry.getValue(), jrParameter)
+                    : entry.getValue();
+            result.put(entry.getKey(), castedValue);
         }
         return result;
+    }
+
+    private JRParameter findJRParameterByName(JasperReport report, String paramName) {
+        return Stream.of(report.getParameters())
+                .filter(param -> param.getName().equals(paramName))
+                .findAny()
+                .orElse(null);
     }
 
     private Object castParam(Object value, JRParameter jrParameter) {
-        if (!Collection.class.isAssignableFrom(jrParameter.getValueClass())) {
-            return castParamToType(value, jrParameter.getValueClass());
+        if (Collection.class.isAssignableFrom(jrParameter.getValueClass())) {
+            return castParamToCollection(value, jrParameter);
         }
-        // в отчете параметр является коллекцией:
+        return castParamToType(value, jrParameter.getValueClass());
+    }
+
+    /**
+     * Приводит параметр запроса к коллекции значений заданного в отчете типа.
+     * Тип элементов коллекции определяется методом {@link JRParameter#getNestedType()}
+     *
+     * @param value параметр запроса
+     * @param jrCollectionParameter параметр шаблона отчета
+     * @return коллекция значений
+     */
+    private Collection<Object> castParamToCollection(Object value, JRParameter jrCollectionParameter) {
+        Collection<?> inputCollection = (value instanceof Collection) ? (Collection<?>) value : List.of(value);
         Collection<Object> result = new ArrayList<>();
-        if (Collection.class.isAssignableFrom(value.getClass())) {
-            // если value также является коллекцией, пытаемся закастить каждый элемент коллекции к
-            // возвращаемому getNestedType() типу
-            Collection<?> collection = (Collection<?>) value;
-            for (Object o : collection) {
-                result.add((jrParameter.getNestedType() == null) ? o : castParamToType(o, jrParameter.getNestedType()));
-            }
-        } else {
-            // если передано единичное значение параметра:
-            result.add(castParamToType(value, jrParameter.getValueClass()));
+
+        Class<?> nestedType = jrCollectionParameter.getNestedType();
+        for (Object item : inputCollection) {
+            result.add(nestedType == null ? item : castParamToType(item, nestedType));
         }
         return result;
     }
 
-    private Object castParamToType(Object value, Class<?> jrpParameterClass) {
+    private Object castParamToType(Object value, Class<?> targetClass) {
         try {
-            return jrpParameterClass
-                    .getDeclaredConstructor(value.getClass()).newInstance(value);
+            return targetClass.getDeclaredConstructor(value.getClass()).newInstance(value);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
                  NoSuchMethodException e) {
             throw new ReportGenerateException(e);

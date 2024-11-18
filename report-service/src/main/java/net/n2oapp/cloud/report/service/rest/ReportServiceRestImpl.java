@@ -257,14 +257,7 @@ public class ReportServiceRestImpl implements ReportService {
         if (params.containsKey(REPORT_DATASOURCE_NAME)) {
             return params.get(REPORT_DATASOURCE_NAME).toString();
         }
-
-        for (JRParameter jrParameter : report.getParameters()) {
-            if (jrParameter.getName().equals(REPORT_DATASOURCE_NAME)) {
-                return jrParameter.getDefaultValueExpression().getText();
-            }
-        }
-
-        return null;
+        return report.getProperty(REPORT_DATASOURCE_NAME);
     }
 
     private DataSource getDataSource(JasperReport report, Map<String, Object> params) {

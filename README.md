@@ -92,11 +92,9 @@ report.data.values[1].url=jdbc:postgresql://localhost:5432/idm
 ```
 Существуют два способа связать отчет с конкретным датасорсом 
 1. В запросе вызова отчета указать параметр REPORT_DATASOURCE_NAME, например  http://localhost:8080/api/report/report.pdf?REPORT_DATASOURCE_NAME=lkzeo
-2. В параметрах самого .jrxml - файла прописать REPORT_DATASOURCE_NAME, например 
+2. В свойствах самого .jrxml - файла прописать REPORT_DATASOURCE_NAME, например 
 ```xml
-<parameter name="REPORT_DATASOURCE_NAME" class="java.lang.String">
-    <defaultValueExpression><![CDATA[lkzeo]]></defaultValueExpression>
-</parameter>
+<property name="REPORT_DATASOURCE_NAME" value="lkzeo"/>
 ```
 
 ## Вложенные изображения в base64

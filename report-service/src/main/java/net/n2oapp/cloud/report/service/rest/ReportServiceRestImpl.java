@@ -3,7 +3,6 @@ package net.n2oapp.cloud.report.service.rest;
 import net.n2oapp.cloud.report.api.ReportService;
 import net.n2oapp.cloud.report.exception.ReportException;
 import net.n2oapp.cloud.report.service.exception.ReportGenerateException;
-import net.n2oapp.cloud.report.service.filestorage.FileStorage;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.export.JRCsvExporter;
 import net.sf.jasperreports.engine.export.JRPdfExporter;
@@ -20,6 +19,7 @@ import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
+import ru.i_novus.common.file.storage.FsFileStorage;
 
 import javax.sql.DataSource;
 import javax.ws.rs.core.MediaType;
@@ -53,7 +53,7 @@ public class ReportServiceRestImpl implements ReportService {
     private String fileStorageRoot;
 
     @Autowired
-    private FileStorage fileStorage;
+    private FsFileStorage storage;
 
     @Autowired
     private Map<String, DataSource> dataSourcesWithName;
@@ -84,7 +84,7 @@ public class ReportServiceRestImpl implements ReportService {
             String fileName = getFileNameWithoutExtension(attachment.getContentDisposition().getFilename());
 
             try (InputStream iss = new ByteArrayInputStream(os.toByteArray())) {
-                fileStorage.saveContentWithFullPath(iss, fileName + withLeadingDot(JASPER_EXTENSION));
+                storage.saveContentWithFullPath(iss, fileName + withLeadingDot(JASPER_EXTENSION));
             }
         } catch (IOException e) {
             throw new ReportException("Failed to save compiled report template (.jasper)" + e.getMessage(), e);
@@ -143,7 +143,7 @@ public class ReportServiceRestImpl implements ReportService {
 
     @SuppressWarnings("unchecked")
     private InputStream generate(String template, String format, Map<String, Object> params) throws JRException, IOException, SQLException {
-        InputStream templateFileIO = fileStorage.getContent(template + withLeadingDot(JASPER_EXTENSION));
+        InputStream templateFileIO = storage.getContent(template + withLeadingDot(JASPER_EXTENSION));
         JasperReport report = (JasperReport) JRLoader.loadObject(templateFileIO);
         params = getCastedParams(params, report);
         try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {

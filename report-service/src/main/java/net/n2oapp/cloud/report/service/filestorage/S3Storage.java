@@ -51,7 +51,7 @@ public class S3Storage implements FsFileStorage {
 
     @Override
     public void removeContent(String path) {
-        if (hasText(path)) {
+        if (!hasText(path)) {
             return;
         }
         try {

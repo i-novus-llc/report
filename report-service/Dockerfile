@@ -2,7 +2,7 @@ FROM images.digitalms.ru/library/redos7c/jdk-17:17.0.1.0.12-1.30.0
 
 USER root
 
-RUN dnf install -y dejavu-serif-fonts curl \
+RUN dnf install -y dejavu-serif-fonts \
     && dnf clean all
 
 USER 10001

@@ -1,25 +1,21 @@
-package net.n2oapp.cloud.report.service.cloudstorage;
+package net.n2oapp.cloud.report.service.filestorage;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.S3Object;
+import lombok.RequiredArgsConstructor;
 import net.n2oapp.cloud.report.exception.ReportException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.stereotype.Component;
 import ru.i_novus.common.file.storage.FsFileStorage;
 
 import java.io.InputStream;
 
 import static org.springframework.util.StringUtils.hasText;
 
-@Component
-@ConditionalOnProperty(value = "report-service.s3.enabled", havingValue = "true")
+@RequiredArgsConstructor
 public class S3Storage implements FsFileStorage {
 
-    @Autowired
-    private AmazonS3 s3client;
+    private final AmazonS3 s3client;
 
     @Value("${report-service.s3.bucket-name:reports}")
     private String bucketName;

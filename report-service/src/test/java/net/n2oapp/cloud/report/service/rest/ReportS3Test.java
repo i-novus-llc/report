@@ -10,6 +10,8 @@ import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.TestPropertySource;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.utility.DockerImageName;
@@ -55,17 +57,16 @@ class ReportS3Test {
     @Autowired
     private ReportService reportService;
 
-    @BeforeAll
-    static void setupS3Storage() {
+    @DynamicPropertySource
+    static void setupMinio(DynamicPropertyRegistry registry) {
         minio = new GenericContainer<>(DockerImageName.parse("minio/minio:latest"))
                 .withExposedPorts(9000)
                 .withEnv("MINIO_ROOT_USER", "test_user")
                 .withEnv("MINIO_ROOT_PASSWORD", "test_user")
-                .withCommand("server /data")
-                .withCreateContainerCmdModifier(cmd -> cmd.withPortBindings(
-                        new PortBinding(Ports.Binding.bindPort(9991), new ExposedPort(9000))
-                ));
+                .withCommand("server /data");
         minio.start();
+        var endpoint = "http://" + minio.getHost() + ":" + minio.getMappedPort(9000);
+        registry.add("report-service.s3.endpoint", () -> endpoint);
     }
 
     @BeforeEach
@@ -112,7 +113,7 @@ class ReportS3Test {
         assertEquals(0, errorCount.get());
     }
 
-    private UriInfo mockUriInfo(){
+    private UriInfo mockUriInfo() {
         var uriInfo = Mockito.mock(UriInfo.class);
         MultivaluedMap<String, String> queryParamMap = new MultivaluedHashMap<>();
         queryParamMap.put("REPORT_DATASOURCE_NAME", List.of(IN_MEMORY_DB_NAME));

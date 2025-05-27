@@ -49,7 +49,7 @@ import static org.mockito.Mockito.*;
 class ReportS3Test {
 
     private static GenericContainer<?> minio;
-    private static final int CONCURRENT_USERS = 10;
+    private static final int CONCURRENT_USERS = 200;
     private static final int TEST_TIMEOUT_SECONDS = 30;
 
     @Autowired

@@ -19,6 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Controller;
 import ru.i_novus.common.file.storage.FsFileStorage;
 
@@ -144,71 +145,43 @@ public class ReportServiceRestImpl implements ReportService {
 
     @SuppressWarnings("unchecked")
     private InputStream generate(String template, String format, Map<String, Object> params) throws JRException, IOException, SQLException {
-        InputStream templateFileIO = storage.getContent(template + withLeadingDot(JASPER_EXTENSION));
-        JasperReport report = (JasperReport) JRLoader.loadObject(templateFileIO);
-        params = getCastedParams(params, report);
-        try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
-            DataSource dataSource = getDataSource(report, params);
-            JasperPrint jasperPrint;
-            if (dataSource != null) {
-                jasperPrint = JasperFillManager.fillReport(report, params, dataSource.getConnection());
-            } else {
-                jasperPrint = JasperFillManager.fillReport(report, params);
+        try (var templateFileIO = storage.getContent(template + withLeadingDot(JASPER_EXTENSION))) {
+            var report = (JasperReport) JRLoader.loadObject(templateFileIO);
+            params = getCastedParams(params, report);
+            try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
+                var dataSource = getDataSource(report, params);
+                JasperPrint jasperPrint;
+                if (dataSource != null) {
+                    var connection = dataSource.getConnection();
+                    jasperPrint = JasperFillManager.fillReport(report, params, connection);
+                    connection.close();
+                } else
+                    jasperPrint = JasperFillManager.fillReport(report, params);
+
+                var exporterAndOutput = getExporterAndOutput(os, format);
+                var exporter = exporterAndOutput.getFirst();
+                var output = exporterAndOutput.getSecond();
+
+                exporter.setExporterInput(new SimpleExporterInput(jasperPrint));
+                exporter.setExporterOutput(output);
+                exporter.exportReport();
+                return new ByteArrayInputStream(os.toByteArray());
             }
-
-
-            Exporter exporter;
-            ExporterOutput output;
-
-            switch (format.toLowerCase()) {
-                case "pdf": {
-                    exporter = new JRPdfExporter();
-                    output = new SimpleOutputStreamExporterOutput(os);
-                    break;
-                }
-                case "xml": {
-                    exporter = new JRXmlExporter();
-                    output = new SimpleXmlExporterOutput(os);
-                    break;
-                }
-                case "csv": {
-                    exporter = new JRCsvExporter();
-                    output = new SimpleWriterExporterOutput(os);
-                    break;
-                }
-                case "xlsx": {
-                    exporter = new JRXlsxExporter();
-                    output = new SimpleOutputStreamExporterOutput(os);
-                    break;
-                }
-                case "xls": {
-                    exporter = new JRXlsExporter();
-                    output = new SimpleOutputStreamExporterOutput(os);
-                    break;
-                }
-                case "docx": {
-                    exporter = new JRDocxExporter();
-                    output = new SimpleOutputStreamExporterOutput(os);
-                    break;
-                }
-                case "odt": {
-                    exporter = new JROdtExporter();
-                    output = new SimpleOutputStreamExporterOutput(os);
-                    break;
-                }
-                case "ods": {
-                    exporter = new JROdsExporter();
-                    output = new SimpleOutputStreamExporterOutput(os);
-                    break;
-                }
-                default:
-                    throw new ReportException("Format not supported: " + format);
-            }
-            exporter.setExporterInput(new SimpleExporterInput(jasperPrint));
-            exporter.setExporterOutput(output);
-            exporter.exportReport();
-            return new ByteArrayInputStream(os.toByteArray());
         }
+    }
+
+    private Pair<Exporter, ExporterOutput> getExporterAndOutput(ByteArrayOutputStream os, String format) {
+        return switch (format.toLowerCase()) {
+            case "pdf" -> Pair.of(new JRPdfExporter(), new SimpleOutputStreamExporterOutput(os));
+            case "xml" -> Pair.of(new JRXmlExporter(), new SimpleXmlExporterOutput(os));
+            case "csv" -> Pair.of(new JRCsvExporter(), new SimpleWriterExporterOutput(os));
+            case "xlsx" -> Pair.of(new JRXlsxExporter(), new SimpleOutputStreamExporterOutput(os));
+            case "xls" -> Pair.of(new JRXlsExporter(), new SimpleOutputStreamExporterOutput(os));
+            case "docx" -> Pair.of(new JRDocxExporter(), new SimpleOutputStreamExporterOutput(os));
+            case "odt" -> Pair.of(new JROdtExporter(), new SimpleOutputStreamExporterOutput(os));
+            case "ods" -> Pair.of(new JROdsExporter(), new SimpleOutputStreamExporterOutput(os));
+            default -> throw new ReportException("Format not supported: " + format);
+        };
     }
 
     private Map<String, Object> getCastedParams(Map<String, Object> params, JasperReport report) {

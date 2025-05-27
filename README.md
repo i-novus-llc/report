@@ -1,10 +1,10 @@
 [![Apache License 2](https://img.shields.io/hexpm/l/plug.svg?style=flat)](http://www.apache.org/licenses/LICENSE-2.0)
 
 # Требования
-- OpenJDK 14
+- OpenJDK 17
 
 # Cтек технологий
-- Java 14
+- Java 17
 - JAX-RS
 - Spring Boot 2.7
 - Spring Cloud 2021.0.9 (Jubilee)

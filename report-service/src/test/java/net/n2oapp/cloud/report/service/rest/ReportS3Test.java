@@ -1,8 +1,5 @@
 package net.n2oapp.cloud.report.service.rest;
 
-import com.github.dockerjava.api.model.ExposedPort;
-import com.github.dockerjava.api.model.PortBinding;
-import com.github.dockerjava.api.model.Ports;
 import lombok.extern.slf4j.Slf4j;
 import net.n2oapp.cloud.report.api.ReportService;
 import net.n2oapp.cloud.report.service.TestApplication;

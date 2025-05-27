@@ -15,6 +15,7 @@ import net.sf.jasperreports.engine.export.ooxml.JRXlsxExporter;
 import net.sf.jasperreports.engine.util.JRLoader;
 import net.sf.jasperreports.export.*;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -223,7 +224,9 @@ public class ReportServiceRestImpl implements ReportService {
     }
 
     private JRParameter findJRParameterByName(JasperReport report, String paramName) {
-        return Stream.of(report.getParameters())
+        if (isNull(report.getParameters()) || StringUtils.isBlank(paramName))
+            return null;
+        else return Stream.of(report.getParameters())
                 .filter(param -> param.getName().equals(paramName))
                 .findAny()
                 .orElse(null);
@@ -240,7 +243,7 @@ public class ReportServiceRestImpl implements ReportService {
      * Приводит параметр запроса к коллекции значений заданного в отчете типа.
      * Тип элементов коллекции определяется методом {@link JRParameter#getNestedType()}
      *
-     * @param value параметр запроса
+     * @param value                 параметр запроса
      * @param jrCollectionParameter параметр шаблона отчета
      * @return коллекция значений
      */

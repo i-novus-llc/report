@@ -30,12 +30,12 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(locations = {"classpath:application-test.properties"})
 class ReportServiceRestImplTest {
 
-    private static final String PATH = "/net/n2oapp/report/service/rest/";
-    private static final String MASTER_TEMPLATE_FILE_NAME = "masterReportTemplate";
-    private static final String DETAIL_TEMPLATE_FILE_NAME = "detailReportTemplate";
-    private static final String EXAMPLE_TEMPLATE_FILE_NAME = "exampleReportTemplate";
-    private static final String PARAMS_TEMPLATE_FILE_NAME = "paramsReportTemplate";
-    private static final String IN_MEMORY_DB_NAME = "in_memory_db";
+    public static final String PATH = "/net/n2oapp/report/service/rest/";
+    public static final String MASTER_TEMPLATE_FILE_NAME = "masterReportTemplate";
+    public static final String DETAIL_TEMPLATE_FILE_NAME = "detailReportTemplate";
+    public static final String EXAMPLE_TEMPLATE_FILE_NAME = "exampleReportTemplate";
+    public static final String PARAMS_TEMPLATE_FILE_NAME = "paramsReportTemplate";
+    public static final String IN_MEMORY_DB_NAME = "in_memory_db";
 
     @Value("${fileStorage.root}")
     private String fileStorageRoot;
@@ -54,7 +54,7 @@ class ReportServiceRestImplTest {
 
     @Test
     void testGetCsvReportFromInMemoryDb() throws Exception {
-        testCompile(EXAMPLE_TEMPLATE_FILE_NAME);
+        testCompile(EXAMPLE_TEMPLATE_FILE_NAME, reportService);
 
         UriInfo uriInfo = Mockito.mock(UriInfo.class);
         MultivaluedMap<String, String> queryParamMap = new MultivaluedHashMap<>();
@@ -71,27 +71,27 @@ class ReportServiceRestImplTest {
 
     @Test
     void testLifecycle() throws IOException {
-        testCompile(DETAIL_TEMPLATE_FILE_NAME);
-        testCompile(MASTER_TEMPLATE_FILE_NAME);
+        testCompile(DETAIL_TEMPLATE_FILE_NAME, reportService);
+        testCompile(MASTER_TEMPLATE_FILE_NAME, reportService);
 
         UriInfo uriInfo = Mockito.mock(UriInfo.class);
         MultivaluedMap<String, String> queryParamMap = new MultivaluedHashMap<>();
         queryParamMap.put("title", List.of("abba"));
         Mockito.when(uriInfo.getQueryParameters()).thenReturn(queryParamMap);
 
-        testGenerate("pdf", uriInfo);
-        testGenerate("xml", uriInfo);
-        testGenerate("csv", uriInfo);
-        testGenerate("xls", uriInfo);
-        testGenerate("xlsx", uriInfo);
-        testGenerate("docx", uriInfo);
-        testGenerate("odt", uriInfo);
-        testGenerate("ods", uriInfo);
+        testGenerate("pdf", uriInfo,reportService);
+        testGenerate("xml", uriInfo,reportService);
+        testGenerate("csv", uriInfo,reportService);
+        testGenerate("xls", uriInfo,reportService);
+        testGenerate("xlsx", uriInfo,reportService);
+        testGenerate("docx", uriInfo,reportService);
+        testGenerate("odt", uriInfo,reportService);
+        testGenerate("ods", uriInfo,reportService);
     }
 
     @Test
     void testCollectionParams() throws Exception {
-        testCompile(PARAMS_TEMPLATE_FILE_NAME);
+        testCompile(PARAMS_TEMPLATE_FILE_NAME, reportService);
 
         UriInfo uriInfo = Mockito.mock(UriInfo.class);
         MultivaluedMap<String, String> queryParamMap = new MultivaluedHashMap<>();
@@ -119,7 +119,7 @@ class ReportServiceRestImplTest {
 
     @Test
     void testSendingSingleValueToCollectionParam() throws Exception {
-        testCompile(PARAMS_TEMPLATE_FILE_NAME);
+        testCompile(PARAMS_TEMPLATE_FILE_NAME, reportService);
 
         UriInfo uriInfo = Mockito.mock(UriInfo.class);
         MultivaluedMap<String, String> queryParamMap = new MultivaluedHashMap<>();
@@ -143,7 +143,7 @@ class ReportServiceRestImplTest {
 
     @Test
     void testWrongTypeCollectionParams() throws Exception {
-        testCompile(PARAMS_TEMPLATE_FILE_NAME);
+        testCompile(PARAMS_TEMPLATE_FILE_NAME, reportService);
 
         UriInfo uriInfo = Mockito.mock(UriInfo.class);
         MultivaluedMap<String, String> queryParamMap = new MultivaluedHashMap<>();
@@ -152,6 +152,22 @@ class ReportServiceRestImplTest {
         Mockito.when(uriInfo.getQueryParameters()).thenReturn(queryParamMap);
 
         assertThrows(ReportException.class, () -> reportService.generateReport(PARAMS_TEMPLATE_FILE_NAME, "csv", uriInfo));
+    }
+
+    public static void testCompile(String templateFileName, ReportService reportService) throws IOException {
+        try (InputStream inputStream = ReportServiceRestImplTest.class.getResourceAsStream(PATH + templateFileName + ".jrxml")) {
+            Attachment attachment = new Attachment(templateFileName, inputStream,
+                    new ContentDisposition("form-data; name=\"file\"; filename=\"" + templateFileName + ".jrxml" + "\""));
+            Response response = reportService.compileReportTemplate(attachment);
+            assertEquals(200, response.getStatus());
+        }
+    }
+
+    public static void testGenerate(String format, UriInfo uriInfo, ReportService reportService) {
+        try (Response response = reportService.generateReport(MASTER_TEMPLATE_FILE_NAME, format, uriInfo)) {
+            assertEquals(200, response.getStatus());
+            assertTrue(response.getHeaders().get(HttpHeaders.CONTENT_DISPOSITION).get(0).toString().contains(MASTER_TEMPLATE_FILE_NAME + "." + format));
+        }
     }
 
     private void compareContents(Response response) {
@@ -169,22 +185,6 @@ class ReportServiceRestImplTest {
         assertEquals("Kolya", employees[6]);
         assertEquals("36", employees[7]);
         assertEquals("2000", employees[8]);
-    }
-
-    private void testCompile(String templateFileName) throws IOException {
-        try (InputStream inputStream = ReportServiceRestImplTest.class.getResourceAsStream(PATH + templateFileName + ".jrxml")) {
-            Attachment attachment = new Attachment(templateFileName, inputStream,
-                    new ContentDisposition("form-data; name=\"file\"; filename=\"" + templateFileName + ".jrxml" + "\""));
-            Response response = reportService.compileReportTemplate(attachment);
-            assertEquals(200, response.getStatus());
-        }
-    }
-
-    private void testGenerate(String format, UriInfo uriInfo) {
-        try (Response response = reportService.generateReport(MASTER_TEMPLATE_FILE_NAME, format, uriInfo)) {
-            assertEquals(200, response.getStatus());
-            assertTrue(response.getHeaders().get(HttpHeaders.CONTENT_DISPOSITION).get(0).toString().contains(MASTER_TEMPLATE_FILE_NAME + "." + format));
-        }
     }
 
 }

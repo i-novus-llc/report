@@ -116,7 +116,6 @@ class ReportS3Test {
                         staticMock.when(() -> JRLoader.loadObject(any(InputStream.class)))
                                 .thenAnswer(invocation -> jasperReport);
                         //генерация отчета
-                        testGenerate("xlsx", uriInfo, reportService);
                         try (Response response = reportService.generateReport(EXAMPLE_TEMPLATE_FILE_NAME, "xlsx", uriInfo)) {
                             assertEquals(200, response.getStatus());
                             successCount.incrementAndGet();
